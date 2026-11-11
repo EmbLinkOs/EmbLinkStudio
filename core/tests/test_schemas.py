@@ -1,6 +1,17 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-"""Every message the core sends matches the schemas in protocol/ (spec section 9, Tests)."""
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    test_schemas.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""Every message the core sends matches the schemas in protocol/ (spec section 9, Tests).
+
+Checks that the schemas themselves are valid, then validates the initialize params,
+the lifecycle results and the error responses against them.
+"""
 
 import jsonschema
 

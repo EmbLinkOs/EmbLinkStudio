@@ -1,9 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    server.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
 """The JSON-RPC server behind `emblink-studio-core serve` (spec sections 4 and 5).
 
 Stage S0 implements the lifecycle only: initialize, initialized, shutdown, exit.
 Standard output carries protocol traffic and nothing else; the log goes to standard error.
+Requests before initialize are refused, the exit code is 0 only when exit follows
+shutdown, and a handler that raises is answered with an internal error instead of
+stopping the core.
 """
 
 from __future__ import annotations

@@ -14,8 +14,53 @@ EmbLink Studio is licensed under the Apache License, Version 2.0 (see `LICENSE`)
 
 ## Rules
 
-- Every source file starts with an SPDX header (`SPDX-License-Identifier: Apache-2.0`) and a
-  copyright line.
+- Every source file starts with the file header below: the SPDX licence line and the copyright
+  line come first, then the project line, then what the file is for, who wrote it and when.
+  The date is the day the file was created; it does not change when the file does.
+
+  C++ (`.h`, `.cpp`), a Doxygen block:
+
+  ```cpp
+  // SPDX-License-Identifier: Apache-2.0
+  // Copyright 2026 Your Name
+  //
+  // This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+  // Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+  /**
+   * @file    example.cpp
+   * @brief   One line: what the file holds.
+   *
+   * @details
+   * A few lines: what it does, its rules and its edge cases.
+   *
+   * @see     example.h
+   * @author  Your Name
+   * @date    YYYY-MM-DD (created)
+   */
+  ```
+
+  Python: the same lines as comments, and the description in the module docstring.
+
+  ```python
+  # SPDX-License-Identifier: Apache-2.0
+  # Copyright 2026 Your Name
+  #
+  # This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+  # Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+  #
+  # File:    example.py
+  # Author:  Your Name
+  # Created: YYYY-MM-DD
+  """One line: what the module holds.
+
+  A few lines: what it does, its rules and its edge cases.
+  """
+  ```
+
+  Build and configuration files (CMake, TOML, YAML) carry the first five lines and one or two
+  lines on what the file is for. Markdown files carry the SPDX line only; JSON files, which
+  cannot hold comments, carry none.
 - C++ is formatted with clang-format 18 (`.clang-format`), Python with ruff (`ruff.toml`).
   `pip install clang-format==18.1.8` gives the version CI runs.
 - A new third-party component is added to `third_party/components.json` in the same pull

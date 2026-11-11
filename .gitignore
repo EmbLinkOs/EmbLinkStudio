@@ -6,3 +6,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .DS_Store
+
+# Local-only screenshots of the IDE as it progresses
+progress-screenshots/
+.cache/

@@ -1,5 +1,23 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    mainwindow.h
+ * @brief   MainWindow: the main window of EmbLink Studio (stage S0).
+ *
+ * @details
+ * Shows whether EmbLink Studio Core is connected, offers a restart when the core
+ * fails or stops unexpectedly, and shows the core's log in a dock. The window owns
+ * the CoreClient for the life of the application.
+ *
+ * @see     Spec section 4; coreclient.h
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #pragma once
 
 #include "coreclient.h"

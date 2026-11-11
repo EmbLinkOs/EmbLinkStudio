@@ -1,6 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-"""The `emblink-studio-core` command; every RPC method gains a subcommand as it lands (spec §4)."""
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    cli.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""The `emblink-studio-core` command line.
+
+`serve` runs the JSON-RPC server on standard input and output; `--version` prints the
+core's version and the protocol it speaks. Every RPC method gains a subcommand as it
+lands (spec section 4).
+"""
 
 from __future__ import annotations
 

@@ -1,6 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-"""The S0 lifecycle, run as a real child process the way the desktop runs it."""
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    test_server.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""The S0 lifecycle, run as a real child process the way the desktop runs it.
+
+Covers initialize/shutdown/exit, the exit code when shutdown is skipped or standard
+input closes, requests before initialize, unknown methods and bad params, refusals
+after shutdown, recovery from a bad body, and that standard output holds only frames.
+"""
 
 from conftest import INIT, frames, notification, request, run_core
 from emblink_studio_core import protocol

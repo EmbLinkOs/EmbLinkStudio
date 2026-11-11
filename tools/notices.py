@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    notices.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
 """Check every third-party component's licence and write the notices list (spec section 9).
 
 Fails (exit 1) on a licence outside the allowed list, an LGPL component that is not linked

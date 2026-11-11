@@ -1,5 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# Packaging of EmbLink Studio Core (the Python engine) and its test settings.
 [build-system]
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"

@@ -1,5 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    conftest.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""Shared pytest helpers for the core's tests.
+
+Builds JSON-RPC messages (`request`, `notification`, `INIT`), frames them (`frames`),
+runs the core as a real child process the way the desktop does (`run_core`), and
+loads the protocol's JSON schemas from protocol/ (the `schemas` fixture).
+"""
+
 from __future__ import annotations
 
 import io

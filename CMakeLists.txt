@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# Top-level build: the EmbLink Studio desktop (Qt 6, C++17) and its tests.
+# Configure with a preset from CMakePresets.json, e.g. `cmake --preset dev`.
 cmake_minimum_required(VERSION 3.21)
 
 project(EmbLinkStudio VERSION 0.1.0 LANGUAGES CXX)

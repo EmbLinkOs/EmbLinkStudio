@@ -1,5 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    test_framing.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""Tests for the core's Content-Length framing (emblink_studio_core.framing).
+
+Covers a round trip with non-ASCII text, byte counting, a clean end of stream, extra
+and mixed-case headers, two frames in one stream, broken frames (fatal) and a body
+that is not JSON (skipped, the stream stays readable).
+"""
+
 import io
 
 import pytest

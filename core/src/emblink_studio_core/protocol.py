@@ -1,6 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-"""Protocol constants shared with the desktop (spec section 5)."""
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    protocol.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""Protocol constants shared with the desktop (spec section 5).
+
+PROTOCOL_VERSION is the version this core speaks; the desktop refuses a core whose
+major version differs from its own (kProtocolVersion in app/src/coreclient.h). The
+error codes are JSON-RPC 2.0's own plus EmbLink Studio's (spec section 5, Errors).
+"""
 
 from __future__ import annotations
 

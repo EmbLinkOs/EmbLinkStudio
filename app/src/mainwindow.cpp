@@ -1,5 +1,25 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    mainwindow.cpp
+ * @brief   Implementation of MainWindow: layout, menus, About dialog, core lifecycle.
+ *
+ * @details
+ * Builds the status label, the restart button, the "Core log" dock (a QDockWidget
+ * until the docking framework is decided, spec section 11 question 1) and the File,
+ * View and Help menus. The About dialog shows the third-party notices bundled as the
+ * :/NOTICES.md resource. The core is started when the window is built and stopped
+ * when it closes.
+ *
+ * @see     mainwindow.h
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #include "mainwindow.h"
 
 #include <QApplication>

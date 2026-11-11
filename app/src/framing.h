@@ -1,5 +1,26 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    framing.h
+ * @brief   Framer: Content-Length framing of JSON-RPC messages, desktop side.
+ *
+ * @details
+ * Each message is a compact JSON object preceded by a "Content-Length: <bytes>"
+ * header and a blank line, the framing LSP uses. Framer::encode() builds one frame;
+ * a Framer instance decodes a stream incrementally: feed() it bytes as they arrive
+ * and call next() until it returns nothing.
+ *
+ * The core's side of the same format is core/src/emblink_studio_core/framing.py.
+ *
+ * @see     Spec section 4 (transport)
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #pragma once
 
 #include <QByteArray>

@@ -1,5 +1,27 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    coreclient.h
+ * @brief   CoreClient: the desktop's connection to EmbLink Studio Core.
+ *
+ * @details
+ * Declares CoreClient, which runs EmbLink Studio Core as a child process and talks
+ * JSON-RPC 2.0 to it over the core's standard input and output. Every message is framed
+ * by Framer (Content-Length headers, as in LSP).
+ *
+ * CoreClient performs the initialize handshake, refuses a core whose protocol major
+ * version differs from kProtocolVersion, matches each response to its request by id,
+ * and reports notifications, the core's standard-error log and its exit as Qt signals.
+ *
+ * @see     Spec sections 4 (process model) and 5 (protocol); framing.h
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #pragma once
 
 #include "framing.h"

@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# Build of the desktop: the corelink library, the EmbLinkStudio application,
+# its notices resource, and the Qt tests.
 
 # The link to the core, shared by the application and its tests.
 qt_add_library(emblink_studio_corelink STATIC

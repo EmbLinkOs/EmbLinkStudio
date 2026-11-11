@@ -1,5 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    fake_core.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
 """A fake core for the desktop's tests: `fake_core.py <behaviour>`.
 
 wrong-major  answers initialize with protocol 9.0.0

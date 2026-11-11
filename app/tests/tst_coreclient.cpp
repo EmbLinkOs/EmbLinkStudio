@@ -1,7 +1,24 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
-// The desktop's link to the core, against the real core (S0's acceptance: initialize succeeds)
-// and against fake cores that misbehave.
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    tst_coreclient.cpp
+ * @brief   Qt Test suite for CoreClient, the desktop's link to the core.
+ *
+ * @details
+ * Runs CoreClient against the real core (S0's acceptance test: initialize succeeds
+ * and shutdown/exit ends with code 0) and against fake cores that misbehave
+ * (app/tests/fake_core.py): a wrong protocol major version, a crash after
+ * initialize, an exit before initialize, and a program that does not exist.
+ *
+ * @see     coreclient.h; fake_core.py
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #include "coreclient.h"
 
 #include <QSignalSpy>

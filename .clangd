@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# clangd (VS Code / editor) config: use the dev preset's compile database.
+# Run `cmake --preset dev` once so build/dev/compile_commands.json exists.
+CompileFlags:
+  CompilationDatabase: build/dev

@@ -1,6 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-"""Message framing: JSON bodies behind Content-Length headers, as in LSP (spec section 4)."""
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# File:    framing.py
+# Author:  Junior Deogracias
+# Created: 2026-11-11
+"""Message framing: JSON bodies behind Content-Length headers, as in LSP (spec section 4).
+
+`encode()` builds one frame and `read_message()` reads one from a binary stream.
+FramingError means the stream is out of step and cannot be trusted; its subclass
+BodyError means one body was not a JSON object while the stream is still in step.
+The desktop's side of the same format is app/src/framing.cpp.
+"""
 
 from __future__ import annotations
 

@@ -1,5 +1,24 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    framing.cpp
+ * @brief   Implementation of Framer: encoding and incremental decoding of frames.
+ *
+ * @details
+ * Header names are matched case-insensitively and headers other than Content-Length
+ * are ignored. A missing or invalid Content-Length is fatal, because the stream is
+ * out of step from then on. A body that is not a JSON object is not fatal: its length
+ * was right, so it is reported as {"emblinkstudio.badFrame": <reason>} and skipped.
+ *
+ * @see     framing.h
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #include "framing.h"
 
 #include <QJsonDocument>

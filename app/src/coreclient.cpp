@@ -1,5 +1,29 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Junior Deogracias
+//
+// This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+// Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+
+/**
+ * @file    coreclient.cpp
+ * @brief   Implementation of CoreClient: launch, handshake, request routing, shutdown.
+ *
+ * @details
+ * - defaultLaunch() runs $EMBLINK_STUDIO_CORE when it is set; otherwise it runs the
+ *   core from this source tree with the Python found at build time, putting core/src
+ *   on PYTHONPATH.
+ * - start() starts the process and sends initialize. On a compatible answer it sends
+ *   initialized and emits ready(); otherwise it emits failed() and stops the core.
+ * - stop() sends shutdown then exit, closes the core's input, and kills the process
+ *   if it has not exited within the timeout.
+ * - Standard output is decoded by Framer; a malformed frame kills the core. Standard
+ *   error is split into lines and emitted as logLine().
+ *
+ * @see     coreclient.h
+ * @author  Junior Deogracias
+ * @date    2026-11-11 (created)
+ */
+
 #include "coreclient.h"
 
 #include <QCoreApplication>
