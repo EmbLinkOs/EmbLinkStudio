@@ -90,6 +90,8 @@ jobs:
           status=0
           for c in $(git rev-list --no-merges "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"); do
             who="$(git show -s --format='%an <%ae>' "$c")"
+            # Dependabot cannot sign off; its updates are reviewed before they are merged.
+            case "$who" in "dependabot[bot] <"*) continue ;; esac
             if ! git show -s --format=%B "$c" | grep -qF "Signed-off-by: $who"; then
               echo "::error::commit $c has no 'Signed-off-by: $who'"
               status=1
