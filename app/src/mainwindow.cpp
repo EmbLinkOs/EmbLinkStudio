@@ -10,7 +10,7 @@
  *
  * @details
  * Builds the status label, the restart button, the "Core log" dock (a QDockWidget
- * until the docking framework is decided, spec section 11 question 1) and the File,
+ * until Qt Advanced Docking System lands, spec section 11 question 1) and the File,
  * View and Help menus. The About dialog shows the third-party notices bundled as the
  * :/NOTICES.md resource. The core is started when the window is built and stopped
  * when it closes.
@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     layout->addStretch();
     setCentralWidget(central);
 
-    // QDockWidget until the docking framework is decided (spec section 11, question 1).
+    // QDockWidget until Qt Advanced Docking System lands (decided: spec section 11, question 1).
     auto *dock = new QDockWidget(tr("Core log"), this);
     dock->setObjectName(QStringLiteral("coreLog"));
     m_log = new QPlainTextEdit(dock);

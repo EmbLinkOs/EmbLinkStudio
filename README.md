@@ -3,7 +3,7 @@
 
 The IDE made for EmbLinkRTOS: a native Qt 6 desktop application (`app/`) in front of
 EmbLink Studio Core, a Python engine (`core/`) that it talks to over JSON-RPC 2.0 on stdio.
-Stage S0 (setup) of the specification: the application starts the core, initializes it,
+Stage S0 (setup) of the [specification](docs/specification.md): the application starts the core, initializes it,
 shows its log, and offers a restart if it stops.
 
 ## Build and test
@@ -30,6 +30,7 @@ found; set `EMBLINK_STUDIO_CORE` to an installed `emblink-studio-core` to use th
 | `app/` | The Qt application and its tests |
 | `core/` | EmbLink Studio Core: `emblink-studio-core serve` |
 | `protocol/` | JSON Schemas of every method's parameters and result |
+| `docs/` | The [specification](docs/specification.md) and the [development guide](docs/development.md) |
 | `third_party/components.json` | Every third-party component and its licence |
 | `tools/notices.py` | Checks those licences and writes the notices list for the About box |
 
