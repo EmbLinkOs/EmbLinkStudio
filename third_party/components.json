@@ -1,5 +1,5 @@
 {
-  "_comment": "Every third-party component EmbStudio ships or links (spec section 9). tools/notices.py checks each licence and writes the notices list shown in the About box.",
+  "_comment": "Every third-party component EmbLink Studio ships or links (spec section 9). tools/notices.py checks each licence and writes the notices list shown in the About box.",
   "components": [
     {
       "name": "Qt",

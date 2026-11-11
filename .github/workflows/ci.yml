@@ -16,6 +16,7 @@ jobs:
   core:
     name: Core (${{ matrix.os }}, Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -36,6 +37,7 @@ jobs:
   app:
     name: App (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
@@ -48,6 +50,7 @@ jobs:
       - run: python -m pip install ninja
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
+        timeout-minutes: 15
         with:
           # The release target is Qt 6.8 LTS (spec section 9). Check which 6.8 patch releases
           # are published under the LGPL before raising this.

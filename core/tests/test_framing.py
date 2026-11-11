@@ -4,7 +4,7 @@ import io
 
 import pytest
 
-from embstudio_core.framing import BodyError, FramingError, encode, read_message
+from emblink_studio_core.framing import BodyError, FramingError, encode, read_message
 
 
 def test_round_trip_keeps_unicode():

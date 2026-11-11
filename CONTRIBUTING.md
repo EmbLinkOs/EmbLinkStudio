@@ -1,12 +1,12 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
-# Contributing to EmbStudio
+# Contributing to EmbLink Studio
 
-EmbStudio is licensed under the Apache License, Version 2.0 (see `LICENSE`).
+EmbLink Studio is licensed under the Apache License, Version 2.0 (see `LICENSE`).
 
 ## Two agreements
 
 - **Contributor licence agreement (CLA).** Signed once, before your first contribution is
-  merged. It grants the project the rights it needs to offer EmbStudio under other terms later.
+  merged. It grants the project the rights it needs to offer EmbLink Studio under other terms later.
   The agreement is being prepared and checked by a lawyer; see [CLA.md](CLA.md). Until it is
   published, no outside contribution can be merged.
 - **Developer Certificate of Origin (DCO).** Every commit carries a `Signed-off-by` line

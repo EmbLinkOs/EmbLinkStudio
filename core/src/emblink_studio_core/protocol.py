@@ -13,7 +13,7 @@ METHOD_NOT_FOUND = -32601
 INVALID_PARAMS = -32602
 INTERNAL_ERROR = -32603
 
-# EmbStudio's codes (spec section 5, Errors).
+# EmbLink Studio's codes (spec section 5, Errors).
 NOT_INITIALIZED = 1001
 NO_PROJECT = 1002
 UNTRUSTED = 1003

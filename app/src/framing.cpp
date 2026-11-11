@@ -6,7 +6,7 @@
 #include <QJsonParseError>
 #include <QList>
 
-namespace embstudio
+namespace emblinkstudio
 {
 
 QByteArray Framer::encode(const QJsonObject &message)
@@ -62,9 +62,9 @@ std::optional<QJsonObject> Framer::next()
     const QJsonDocument doc = QJsonDocument::fromJson(body, &parseError);
     if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
         // The frame's length was right, so the stream is still in step: report and skip it.
-        return QJsonObject{{QStringLiteral("embstudio.badFrame"), parseError.errorString()}};
+        return QJsonObject{{QStringLiteral("emblinkstudio.badFrame"), parseError.errorString()}};
     }
     return doc.object();
 }
 
-} // namespace embstudio
+} // namespace emblinkstudio

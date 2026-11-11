@@ -3,7 +3,7 @@
 """The S0 lifecycle, run as a real child process the way the desktop runs it."""
 
 from conftest import INIT, frames, notification, request, run_core
-from embstudio_core import protocol
+from emblink_studio_core import protocol
 
 SHUTDOWN = request(2, "shutdown")
 EXIT = notification("exit")
@@ -15,7 +15,7 @@ def test_initialize_shutdown_exit():
     assert [m["id"] for m in out] == [1, 2]
     result = out[0]["result"]
     assert result["protocol_version"] == protocol.PROTOCOL_VERSION
-    assert result["server"]["name"] == "embstudio-core"
+    assert result["server"]["name"] == "emblink-studio-core"
     assert out[1]["result"] is None
 
 

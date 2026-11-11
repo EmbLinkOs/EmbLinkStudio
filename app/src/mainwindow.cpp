@@ -15,12 +15,12 @@
 #include <QTextBrowser>
 #include <QVBoxLayout>
 
-namespace embstudio
+namespace emblinkstudio
 {
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    setWindowTitle(tr("EmbStudio"));
+    setWindowTitle(tr("EmbLink Studio"));
     resize(960, 600);
 
     auto *central = new QWidget(this);
@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QMenu *view = menuBar()->addMenu(tr("&View"));
     view->addAction(dock->toggleViewAction());
     QMenu *help = menuBar()->addMenu(tr("&Help"));
-    help->addAction(tr("&About EmbStudio"), this, &MainWindow::showAbout);
+    help->addAction(tr("&About EmbLink Studio"), this, &MainWindow::showAbout);
 
     connect(m_restart, &QPushButton::clicked, this, &MainWindow::startCore);
     connect(&m_core, &CoreClient::logLine, m_log, &QPlainTextEdit::appendPlainText);
@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
             [this](const QString &message) { setStatus(message, true); });
     connect(&m_core, &CoreClient::exited, this, [this](int code, bool expected) {
         if (!expected)
-            setStatus(tr("EmbStudio Core stopped unexpectedly (exit code %1). Views are "
+            setStatus(tr("EmbLink Studio Core stopped unexpectedly (exit code %1). Views are "
                          "read-only until it restarts.")
                           .arg(code),
                       true);
@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 void MainWindow::startCore()
 {
-    setStatus(tr("Starting EmbStudio Core..."), false);
+    setStatus(tr("Starting EmbLink Studio Core..."), false);
     m_core.start(CoreClient::defaultLaunch());
 }
 
@@ -89,9 +89,9 @@ void MainWindow::setStatus(const QString &text, bool canRestart)
 void MainWindow::showAbout()
 {
     QDialog dialog(this);
-    dialog.setWindowTitle(tr("About EmbStudio"));
+    dialog.setWindowTitle(tr("About EmbLink Studio"));
     auto *layout = new QVBoxLayout(&dialog);
-    layout->addWidget(new QLabel(tr("<b>EmbStudio</b> %1<br>The IDE made for EmbLinkRTOS. "
+    layout->addWidget(new QLabel(tr("<b>EmbLink Studio</b> %1<br>The IDE made for EmbLinkRTOS. "
                                     "Licensed under the Apache License 2.0.")
                                      .arg(QApplication::applicationVersion()),
                                  &dialog));
@@ -113,4 +113,4 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-} // namespace embstudio
+} // namespace emblinkstudio

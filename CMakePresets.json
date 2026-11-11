@@ -13,7 +13,7 @@
       "displayName": "Release",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/release",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "EMBSTUDIO_BUILD_TESTS": "OFF" }
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "EMBLINK_STUDIO_BUILD_TESTS": "OFF" }
     }
   ],
   "buildPresets": [

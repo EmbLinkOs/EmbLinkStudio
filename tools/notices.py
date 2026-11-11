@@ -56,7 +56,7 @@ def render(components: list[dict]) -> str:
     lines = [
         "# Third-party notices",
         "",
-        "EmbStudio is licensed under the Apache License 2.0. It uses the components below,",
+        "EmbLink Studio is licensed under the Apache License 2.0. It uses the components below,",
         "each under its own licence. LGPL components are linked dynamically and can be",
         "replaced; their sources are available from the links given.",
         "",

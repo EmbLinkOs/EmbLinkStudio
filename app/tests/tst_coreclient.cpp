@@ -7,7 +7,7 @@
 #include <QSignalSpy>
 #include <QTest>
 
-using embstudio::CoreClient;
+using emblinkstudio::CoreClient;
 
 namespace
 {
@@ -15,12 +15,19 @@ namespace
 CoreClient::Launch fakeCore(const QString &behaviour)
 {
     CoreClient::Launch launch;
-    launch.program = QStringLiteral(EMBSTUDIO_PYTHON);
-    launch.arguments = {QStringLiteral(EMBSTUDIO_FAKE_CORE), behaviour};
+    launch.program = QStringLiteral(EMBLINK_STUDIO_PYTHON);
+    launch.arguments = {QStringLiteral(EMBLINK_STUDIO_FAKE_CORE), behaviour};
     return launch;
 }
 
 constexpr int kTimeout = 15000;
+
+// True once the spy has caught a signal. A signal emitted inside start() counts: on Windows a
+// program that cannot be found fails synchronously, before any wait() could see it.
+bool arrived(QSignalSpy &spy)
+{
+    return !spy.isEmpty() || spy.wait(kTimeout);
+}
 
 } // namespace
 
@@ -36,13 +43,13 @@ class TestCoreClient : public QObject
         QSignalSpy failed(&core, &CoreClient::failed);
         QSignalSpy exited(&core, &CoreClient::exited);
         core.start(CoreClient::defaultLaunch());
-        QVERIFY2(ready.wait(kTimeout),
-                 qPrintable(failed.isEmpty() ? QStringLiteral("timeout")
-                                             : failed.first().first().toString()));
+        QVERIFY2(arrived(ready), qPrintable(failed.isEmpty() ? QStringLiteral("timeout")
+                                                             : failed.first().first().toString()));
         QVERIFY(core.isReady());
         const QJsonObject info = ready.first().first().toJsonObject();
-        QCOMPARE(info.value("server").toObject().value("name").toString(), "embstudio-core");
-        QCOMPARE(info.value("protocol_version").toString(), QString(embstudio::kProtocolVersion));
+        QCOMPARE(info.value("server").toObject().value("name").toString(), "emblink-studio-core");
+        QCOMPARE(info.value("protocol_version").toString(),
+                 QString(emblinkstudio::kProtocolVersion));
 
         core.stop();
         QTRY_COMPARE_WITH_TIMEOUT(exited.size(), 1, kTimeout);
@@ -56,7 +63,7 @@ class TestCoreClient : public QObject
         CoreClient core;
         QSignalSpy ready(&core, &CoreClient::ready);
         core.start(CoreClient::defaultLaunch());
-        QVERIFY(ready.wait(kTimeout));
+        QVERIFY(arrived(ready));
         int code = 0;
         core.request("no.such", QJsonValue(), {},
                      [&](int c, const QString &, const QJsonValue &) { code = c; });
@@ -71,7 +78,7 @@ class TestCoreClient : public QObject
         QSignalSpy failed(&core, &CoreClient::failed);
         QSignalSpy exited(&core, &CoreClient::exited);
         core.start(fakeCore("wrong-major"));
-        QVERIFY(failed.wait(kTimeout));
+        QVERIFY(arrived(failed));
         QVERIFY(failed.first().first().toString().contains("9.0.0"));
         QVERIFY(ready.isEmpty());
         QVERIFY(!core.isReady());
@@ -85,7 +92,7 @@ class TestCoreClient : public QObject
         QSignalSpy exited(&core, &CoreClient::exited);
         QSignalSpy log(&core, &CoreClient::logLine);
         core.start(fakeCore("crash"));
-        QVERIFY(ready.wait(kTimeout));
+        QVERIFY(arrived(ready));
         QTRY_COMPARE_WITH_TIMEOUT(exited.size(), 1, kTimeout);
         QCOMPARE(exited.first().at(0).toInt(), 3);
         QCOMPARE(exited.first().at(1).toBool(), false);
@@ -101,7 +108,7 @@ class TestCoreClient : public QObject
         CoreClient core;
         QSignalSpy failed(&core, &CoreClient::failed);
         core.start(fakeCore("silent-exit"));
-        QVERIFY(failed.wait(kTimeout));
+        QVERIFY(arrived(failed));
         QVERIFY(failed.first().first().toString().contains("before it initialized"));
     }
 
@@ -110,9 +117,9 @@ class TestCoreClient : public QObject
         CoreClient core;
         QSignalSpy failed(&core, &CoreClient::failed);
         CoreClient::Launch launch;
-        launch.program = QStringLiteral("embstudio-core-that-does-not-exist");
+        launch.program = QStringLiteral("emblink-studio-core-that-does-not-exist");
         core.start(launch);
-        QVERIFY(failed.wait(kTimeout));
+        QVERIFY(arrived(failed));
         QVERIFY(failed.first().first().toString().contains("Could not start"));
     }
 };

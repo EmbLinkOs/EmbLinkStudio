@@ -7,4 +7,4 @@ target-version = "py311"
 select = ["E", "F", "W", "I", "B", "UP", "EXE"]
 
 [lint.isort]
-known-first-party = ["embstudio_core", "conftest"]
+known-first-party = ["emblink_studio_core", "conftest"]

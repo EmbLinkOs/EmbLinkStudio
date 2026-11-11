@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-# The EmbLinkRTOS layout, used for EmbStudio's C++ too. CI runs clang-format 18.
+# The EmbLinkRTOS layout, used for EmbLink Studio's C++ too. CI runs clang-format 18.
 ---
 Language: Cpp
 BasedOnStyle: LLVM

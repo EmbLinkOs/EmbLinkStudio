@@ -7,11 +7,11 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QApplication::setApplicationName(QStringLiteral("EmbStudio"));
+    QApplication::setApplicationName(QStringLiteral("EmbLink Studio"));
     QApplication::setOrganizationName(QStringLiteral("EmbLink"));
-    QApplication::setApplicationVersion(QStringLiteral(EMBSTUDIO_VERSION));
+    QApplication::setApplicationVersion(QStringLiteral(EMBLINK_STUDIO_VERSION));
 
-    embstudio::MainWindow window;
+    emblinkstudio::MainWindow window;
     window.show();
     return app.exec();
 }

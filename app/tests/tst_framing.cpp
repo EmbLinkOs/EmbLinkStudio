@@ -4,7 +4,7 @@
 
 #include <QTest>
 
-using embstudio::Framer;
+using emblinkstudio::Framer;
 
 class TestFraming : public QObject
 {
@@ -68,7 +68,7 @@ class TestFraming : public QObject
         framer.feed("Content-Length: 3\r\n\r\nnot" + Framer::encode(QJsonObject{{"ok", true}}));
         const auto bad = framer.next();
         QVERIFY(bad.has_value());
-        QVERIFY(bad->contains("embstudio.badFrame"));
+        QVERIFY(bad->contains("emblinkstudio.badFrame"));
         const auto good = framer.next();
         QVERIFY(good.has_value());
         QCOMPARE(good->value("ok").toBool(), true);

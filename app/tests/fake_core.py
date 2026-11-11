@@ -43,7 +43,7 @@ while (message := read()) is not None:
                 "id": message["id"],
                 "result": {
                     "protocol_version": version,
-                    "server": {"name": "embstudio-core", "version": "fake"},
+                    "server": {"name": "emblink-studio-core", "version": "fake"},
                     "capabilities": {},
                 },
             }

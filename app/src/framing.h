@@ -7,7 +7,7 @@
 #include <QString>
 #include <optional>
 
-namespace embstudio
+namespace emblinkstudio
 {
 
 // Content-Length framing of JSON-RPC messages, as in LSP (spec section 4).
@@ -37,4 +37,4 @@ class Framer
     QString m_error;
 };
 
-} // namespace embstudio
+} // namespace emblinkstudio

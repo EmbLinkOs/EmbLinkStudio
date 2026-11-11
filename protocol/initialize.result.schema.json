@@ -9,7 +9,7 @@
     "server": {
       "type": "object",
       "required": ["name", "version"],
-      "properties": { "name": { "const": "embstudio-core" }, "version": { "type": "string" } }
+      "properties": { "name": { "const": "emblink-studio-core" }, "version": { "type": "string" } }
     },
     "capabilities": { "type": "object" }
   }

@@ -13,13 +13,13 @@
 #include <QStringList>
 #include <functional>
 
-namespace embstudio
+namespace emblinkstudio
 {
 
 // The protocol this desktop speaks (spec section 5). A core of another major version is refused.
 inline constexpr char kProtocolVersion[] = "0.1.0";
 
-// Runs EmbStudio Core as a child process and talks JSON-RPC 2.0 to it over stdio.
+// Runs EmbLink Studio Core as a child process and talks JSON-RPC 2.0 to it over stdio.
 class CoreClient : public QObject
 {
     Q_OBJECT
@@ -31,8 +31,8 @@ class CoreClient : public QObject
         QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
     };
 
-    // EMBSTUDIO_CORE=<path to embstudio-core> if set; otherwise the core from this source tree,
-    // run by the Python found at build time.
+    // EMBLINK_STUDIO_CORE=<path to emblink-studio-core> if set; otherwise the core from this source
+    // tree, run by the Python found at build time.
     static Launch defaultLaunch();
 
     using ResultHandler = std::function<void(const QJsonValue &result)>;
@@ -92,4 +92,4 @@ class CoreClient : public QObject
     QJsonObject m_serverInfo;
 };
 
-} // namespace embstudio
+} // namespace emblinkstudio

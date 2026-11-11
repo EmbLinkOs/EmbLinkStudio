@@ -10,7 +10,7 @@ class QLabel;
 class QPlainTextEdit;
 class QPushButton;
 
-namespace embstudio
+namespace emblinkstudio
 {
 
 // S0's window: the core's state, its log, and a restart if it stops (spec section 4).
@@ -35,4 +35,4 @@ class MainWindow : public QMainWindow
     QPlainTextEdit *m_log = nullptr;
 };
 
-} // namespace embstudio
+} // namespace emblinkstudio

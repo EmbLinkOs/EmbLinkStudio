@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QJsonArray>
 
-namespace embstudio
+namespace emblinkstudio
 {
 
 namespace
@@ -24,17 +24,17 @@ int majorOf(const QString &version)
 CoreClient::Launch CoreClient::defaultLaunch()
 {
     Launch launch;
-    const QString installed = launch.environment.value(QStringLiteral("EMBSTUDIO_CORE"));
+    const QString installed = launch.environment.value(QStringLiteral("EMBLINK_STUDIO_CORE"));
     if (!installed.isEmpty()) {
         launch.program = installed;
         launch.arguments = {QStringLiteral("serve")};
         return launch;
     }
     // Development layout: the core's sources next to the application's (S0; packaging is §11 q4).
-    launch.program = QStringLiteral(EMBSTUDIO_PYTHON);
-    launch.arguments = {QStringLiteral("-m"), QStringLiteral("embstudio_core"),
+    launch.program = QStringLiteral(EMBLINK_STUDIO_PYTHON);
+    launch.arguments = {QStringLiteral("-m"), QStringLiteral("emblink_studio_core"),
                         QStringLiteral("serve")};
-    const QString src = QDir::toNativeSeparators(QStringLiteral(EMBSTUDIO_CORE_SRC_DIR));
+    const QString src = QDir::toNativeSeparators(QStringLiteral(EMBLINK_STUDIO_CORE_SRC_DIR));
     const QString old = launch.environment.value(QStringLiteral("PYTHONPATH"));
     launch.environment.insert(QStringLiteral("PYTHONPATH"),
                               old.isEmpty() ? src : src + QDir::listSeparator() + old);
@@ -48,7 +48,7 @@ CoreClient::CoreClient(QObject *parent) : QObject(parent)
     connect(&m_process, &QProcess::finished, this, &CoreClient::onFinished);
     connect(&m_process, &QProcess::errorOccurred, this, [this](QProcess::ProcessError error) {
         if (error == QProcess::FailedToStart)
-            fail(tr("Could not start EmbStudio Core (%1): %2")
+            fail(tr("Could not start EmbLink Studio Core (%1): %2")
                      .arg(m_process.program(), m_process.errorString()));
     });
 }
@@ -71,7 +71,7 @@ void CoreClient::start(const Launch &launch)
     const QJsonObject params{
         {QStringLiteral("protocol_version"), QString::fromLatin1(kProtocolVersion)},
         {QStringLiteral("client"),
-         QJsonObject{{QStringLiteral("name"), QStringLiteral("embstudio")},
+         QJsonObject{{QStringLiteral("name"), QStringLiteral("emblink-studio")},
                      {QStringLiteral("version"), QCoreApplication::applicationVersion()}}},
         {QStringLiteral("capabilities"), QJsonObject()},
     };
@@ -81,7 +81,7 @@ void CoreClient::start(const Launch &launch)
             const QJsonObject info = result.toObject();
             const QString theirs = info.value(QStringLiteral("protocol_version")).toString();
             if (majorOf(theirs) != majorOf(QString::fromLatin1(kProtocolVersion))) {
-                fail(tr("EmbStudio Core speaks protocol %1; this EmbStudio needs %2.x.")
+                fail(tr("EmbLink Studio Core speaks protocol %1; this EmbLink Studio needs %2.x.")
                          .arg(theirs.isEmpty() ? tr("(none)") : theirs)
                          .arg(majorOf(QString::fromLatin1(kProtocolVersion))));
                 // Not from inside the stdout handler: stop() waits for the process.
@@ -94,7 +94,7 @@ void CoreClient::start(const Launch &launch)
             emit ready(info);
         },
         [this](int code, const QString &message, const QJsonValue &) {
-            fail(tr("EmbStudio Core refused to initialize (%1): %2").arg(code).arg(message));
+            fail(tr("EmbLink Studio Core refused to initialize (%1): %2").arg(code).arg(message));
         });
 }
 
@@ -149,7 +149,7 @@ void CoreClient::onStdout()
     while (auto message = m_framer.next())
         handle(*message);
     if (m_framer.failed()) {
-        fail(tr("EmbStudio Core sent a malformed frame: %1").arg(m_framer.error()));
+        fail(tr("EmbLink Studio Core sent a malformed frame: %1").arg(m_framer.error()));
         m_process.kill();
     }
 }
@@ -166,9 +166,9 @@ void CoreClient::onStderr()
 
 void CoreClient::handle(const QJsonObject &message)
 {
-    if (message.contains(QStringLiteral("embstudio.badFrame"))) {
+    if (message.contains(QStringLiteral("emblinkstudio.badFrame"))) {
         emit logLine(tr("dropped a frame that is not JSON: %1")
-                         .arg(message.value(QStringLiteral("embstudio.badFrame")).toString()));
+                         .arg(message.value(QStringLiteral("emblinkstudio.badFrame")).toString()));
         return;
     }
     const QJsonValue id = message.value(QStringLiteral("id"));
@@ -208,7 +208,7 @@ void CoreClient::onFinished(int exitCode, QProcess::ExitStatus status)
     }
     const bool expected = m_stopping;
     if (!expected && !m_ready && status == QProcess::NormalExit && m_pending.contains(m_initId))
-        fail(tr("EmbStudio Core exited (code %1) before it initialized.").arg(exitCode));
+        fail(tr("EmbLink Studio Core exited (code %1) before it initialized.").arg(exitCode));
     m_ready = false;
     m_pending.clear();
     emit exited(status == QProcess::NormalExit ? exitCode : -1, expected);
@@ -220,4 +220,4 @@ void CoreClient::fail(const QString &message)
     emit failed(message);
 }
 
-} // namespace embstudio
+} // namespace emblinkstudio

@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from embstudio_core.framing import encode, read_message
+from emblink_studio_core.framing import encode, read_message
 
 CORE_SRC = Path(__file__).resolve().parents[1] / "src"
 PROTOCOL_DIR = Path(__file__).resolve().parents[2] / "protocol"
@@ -48,10 +48,10 @@ def read_all(data: bytes) -> list[dict[str, Any]]:
 
 
 def run_core(data: bytes) -> tuple[int, list[dict[str, Any]], str]:
-    """Run `python -m embstudio_core serve` as the desktop would, feeding it `data`."""
+    """Run `python -m emblink_studio_core serve` as the desktop would, feeding it `data`."""
     env = dict(os.environ, PYTHONPATH=str(CORE_SRC))
     proc = subprocess.run(
-        [sys.executable, "-m", "embstudio_core", "serve"],
+        [sys.executable, "-m", "emblink_studio_core", "serve"],
         input=data,
         capture_output=True,
         env=env,

@@ -1,8 +1,8 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
-# EmbStudio
+# EmbLink Studio
 
 The IDE made for EmbLinkRTOS: a native Qt 6 desktop application (`app/`) in front of
-EmbStudio Core, a Python engine (`core/`) that it talks to over JSON-RPC 2.0 on stdio.
+EmbLink Studio Core, a Python engine (`core/`) that it talks to over JSON-RPC 2.0 on stdio.
 Stage S0 (setup) of the specification: the application starts the core, initializes it,
 shows its log, and offers a restart if it stops.
 
@@ -19,16 +19,16 @@ python3 -m venv core/.venv && core/.venv/bin/pip install -e "core[dev]"
 core/.venv/bin/pytest core    # the core's tests, including the protocol schemas
 ```
 
-Run the app: `build/dev/app/EmbStudio.app/Contents/MacOS/EmbStudio` on macOS,
-`build/dev/app/EmbStudio` elsewhere. It runs the core from `core/src` with the Python CMake
-found; set `EMBSTUDIO_CORE` to an installed `embstudio-core` to use that instead.
+Run the app: `build/dev/app/EmbLinkStudio.app/Contents/MacOS/EmbLinkStudio` on macOS,
+`build/dev/app/EmbLinkStudio` elsewhere. It runs the core from `core/src` with the Python CMake
+found; set `EMBLINK_STUDIO_CORE` to an installed `emblink-studio-core` to use that instead.
 
 ## Layout
 
 | Path | What |
 | --- | --- |
 | `app/` | The Qt application and its tests |
-| `core/` | EmbStudio Core: `embstudio-core serve` |
+| `core/` | EmbLink Studio Core: `emblink-studio-core serve` |
 | `protocol/` | JSON Schemas of every method's parameters and result |
 | `third_party/components.json` | Every third-party component and its licence |
 | `tools/notices.py` | Checks those licences and writes the notices list for the About box |

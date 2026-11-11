@@ -5,9 +5,9 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "embstudio-core"
+name = "emblink-studio-core"
 dynamic = ["version"]
-description = "EmbStudio Core: the engine behind the EmbStudio IDE for EmbLinkRTOS"
+description = "EmbLink Studio Core: the engine behind the EmbLink Studio IDE for EmbLinkRTOS"
 license = "Apache-2.0"
 requires-python = ">=3.11"
 # Runtime dependencies must also be listed in third_party/components.json (tools/notices.py checks).
@@ -17,10 +17,10 @@ dependencies = []
 dev = ["pytest>=8", "jsonschema>=4.21", "ruff>=0.6"]
 
 [project.scripts]
-embstudio-core = "embstudio_core.cli:main"
+emblink-studio-core = "emblink_studio_core.cli:main"
 
 [tool.setuptools.dynamic]
-version = { attr = "embstudio_core.__version__" }
+version = { attr = "emblink_studio_core.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src"]

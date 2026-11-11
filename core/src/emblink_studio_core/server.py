@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Junior Deogracias
-"""The JSON-RPC server behind `embstudio-core serve` (spec sections 4 and 5).
+"""The JSON-RPC server behind `emblink-studio-core serve` (spec sections 4 and 5).
 
 Stage S0 implements the lifecycle only: initialize, initialized, shutdown, exit.
 Standard output carries protocol traffic and nothing else; the log goes to standard error.
@@ -16,7 +16,7 @@ from typing import Any, BinaryIO
 from . import __version__, protocol
 from .framing import BodyError, FramingError, encode, read_message
 
-log = logging.getLogger("embstudio_core")
+log = logging.getLogger("emblink_studio_core")
 
 Handler = Callable[[Any], Any]
 
@@ -137,7 +137,7 @@ class Server:
         self._initialized = True
         return {
             "protocol_version": protocol.PROTOCOL_VERSION,
-            "server": {"name": "embstudio-core", "version": __version__},
+            "server": {"name": "emblink-studio-core", "version": __version__},
             "capabilities": {},
         }
 
