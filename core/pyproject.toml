@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Junior Deogracias
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "embstudio-core"
+dynamic = ["version"]
+description = "EmbStudio Core: the engine behind the EmbStudio IDE for EmbLinkRTOS"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+# Runtime dependencies must also be listed in third_party/components.json (tools/notices.py checks).
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "jsonschema>=4.21", "ruff>=0.6"]
+
+[project.scripts]
+embstudio-core = "embstudio_core.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "embstudio_core.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

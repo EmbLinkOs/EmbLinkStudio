@@ -1,0 +1,91 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Junior Deogracias
+# S0's acceptance (spec section 8): build and test on Windows, Linux and macOS; initialize
+# succeeds; the notices list is generated.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    name: Core (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e "core[dev]"
+      - run: ruff check core tools
+      - run: ruff format --check core tools
+      - run: python -m pytest core -q
+      - name: Notices list and licence check
+        run: python tools/notices.py --components third_party/components.json --pyproject core/pyproject.toml
+
+  app:
+    name: App (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install ninja
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          # The release target is Qt 6.8 LTS (spec section 9). Check which 6.8 patch releases
+          # are published under the LGPL before raising this.
+          version: "6.8.3"
+          cache: true
+      - name: Linux build dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libxkbcommon-dev
+      - name: MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      - run: cmake --preset dev
+      - run: cmake --build --preset dev
+      - run: ctest --preset dev
+
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: clang-format-18 --dry-run --Werror $(git ls-files 'app/*.cpp' 'app/*.h')
+
+  dco:
+    name: DCO sign-off
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Every commit is signed off by its author
+        run: |
+          status=0
+          for c in $(git rev-list --no-merges "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"); do
+            who="$(git show -s --format='%an <%ae>' "$c")"
+            if ! git show -s --format=%B "$c" | grep -qF "Signed-off-by: $who"; then
+              echo "::error::commit $c has no 'Signed-off-by: $who'"
+              status=1
+            fi
+          done
+          exit $status

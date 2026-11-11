@@ -1,0 +1,15 @@
+{
+  "_comment": "Every third-party component EmbStudio ships or links (spec section 9). tools/notices.py checks each licence and writes the notices list shown in the About box.",
+  "components": [
+    {
+      "name": "Qt",
+      "version": "6.8",
+      "licence": "LGPL-3.0-only",
+      "linkage": "dynamic",
+      "modules": ["Qt Core", "Qt GUI", "Qt Widgets"],
+      "url": "https://www.qt.io/",
+      "source": "https://download.qt.io/official_releases/qt/",
+      "used_by": "the desktop application"
+    }
+  ]
+}

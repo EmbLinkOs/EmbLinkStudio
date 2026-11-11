@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "An error response",
+  "type": "object",
+  "required": ["jsonrpc", "id", "error"],
+  "properties": {
+    "jsonrpc": { "const": "2.0" },
+    "id": { "type": ["integer", "string", "null"] },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "enum": [-32700, -32600, -32601, -32602, -32603,
+                   1001, 1002, 1003, 1004, 1010, 1011, 1020, 1030]
+        },
+        "message": { "type": "string", "minLength": 1 },
+        "data": {}
+      }
+    }
+  }
+}
