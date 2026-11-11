@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Junior Deogracias
+#
+# This file is part of EmbLink Studio, the IDE for EmbLinkRTOS.
+# Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
+#
+# Dependabot: keeps the GitHub Actions used by CI up to date, one grouped pull request a week.
+# The core has no runtime dependencies yet; add a pip entry for /core when it gains one.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
