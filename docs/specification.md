@@ -9,7 +9,14 @@ The handoff specification for EmbLink Studio's developer: what the owner has dec
 
 ## 1. What EmbLink Studio is
 
-EmbLink Studio is **the IDE made for EmbLinkRTOS**: a native Qt desktop application for creating, configuring, building, flashing, debugging and analysing EmbLinkRTOS firmware. It is a long-term product, grown step by step like the RTOS. It is not a VS Code look-alike or a general-purpose editor: it understands the RTOS.
+EmbLink Studio is **the development system for EmbLinkRTOS**. It turns a board and an idea into firmware that is proven to work, and shows the RTOS at every step. It is a long-term product, grown step by step like the RTOS.
+
+It is two things that are one:
+
+1. **A tooling system, the foundation.** EmbLink Studio Core (`emblink-studio-core`) does the whole job: configure, generate, build, flash, debug, decode crashes, run tests on hardware and collect the evidence. Every action is a command, so a terminal, CI or a script does exactly what the desktop does (§4).
+2. **A desktop that makes the system visible.** The Qt application holds no knowledge of its own. It draws what the tools know (pins, clocks, threads, budgets, stacks, crashes, test results) and lets a person change it safely, with a preview before anything is written.
+
+It is not a VS Code look-alike or a general-purpose editor: it understands the RTOS.
 
 - Its boards and chips, as data.
 - Its threads, objects, priorities and stacks.
@@ -30,9 +37,17 @@ EmbLink Studio is **the IDE made for EmbLinkRTOS**: a native Qt desktop applicat
 9. Trace and time execution, and see power residency (later).
 10. See the project's evidence: tests run, on which board, passed or not.
 
+**The test for a feature.** Does it need knowledge of EmbLinkRTOS, the hardware or the evidence?
+
+- **Yes** (the pin map, the budget, RTOS-aware debugging, crash decoding, evidence): it is what EmbLink Studio is for. Build it deeply.
+- **No** (text editing, git, file search): reuse what exists, such as an embedded editor component, clangd and git, and do not spend years on it.
+
+The editor is one tool inside the system: good enough that nobody has to leave, but not the product's identity. Any other editor keeps working, since the generated names and the build's `compile_commands.json` serve it too.
+
 **Non-goals:**
 
 - A general IDE for other RTOSes or bare-metal code.
+- A general-purpose code editor competing with VS Code.
 - Its own compiler: it uses GCC, Clang or EmbCC, which it discovers or downloads.
 - A VS Code extension. Not planned, though the core's interface (§5) would allow one later.
 - Cloud features in the first releases.
@@ -41,10 +56,11 @@ A project whose YAML has things the views don't cover yet still opens. Those fie
 
 ## 2. Decisions already taken
 
-Eighteen decisions are taken, all dated 2026-11-11: seven from v0.1, the ten answers to §11's questions, which the owner accepted as recommended, and the repository going public. A new decision is added here, with its date, once the owner agrees it.
+Nineteen decisions are taken, all dated 2026-11-11: seven from v0.1, the ten answers to §11's questions, which the owner accepted as recommended, the repository going public, and the definition of what EmbLink Studio is. A new decision is added here, with its date, once the owner agrees it.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-11-11 | **EmbLink Studio is the development system for EmbLinkRTOS:** a tooling system (the core and its commands), with a desktop that makes it visible. Features that need knowledge of the RTOS, the hardware or the evidence are built deeply; the rest is reused (§1) | Keeps the project finite: it competes on what no other tool knows, not on general editing |
 | 2026-11-11 | The name is **EmbLink Studio** | Renamed from EmbStudio on 2026-11-11: Wilcom sells embroidery software as "EmbStudio", the same word in software. The distinctive part is now the project's own name (§10) |
 | 2026-11-11 | A **native desktop application in Qt 6**, with no VS Code base | Full control of the interface; a product of its own; the developer knows Qt well |
 | 2026-11-11 | **Step by step:** configuration first, then build, flash and debug, then the editor grows | A useful product early, with the editor (the costliest part) grown over time |

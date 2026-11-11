@@ -1,8 +1,10 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 # EmbLink Studio
 
-The IDE made for EmbLinkRTOS: a native Qt 6 desktop application (`app/`) in front of
-EmbLink Studio Core, a Python engine (`core/`) that it talks to over JSON-RPC 2.0 on stdio.
+The development system for EmbLinkRTOS: EmbLink Studio Core, a Python engine (`core/`) that
+configures, builds, flashes and debugs, and a native Qt 6 desktop (`app/`) that makes it visible.
+They talk JSON-RPC 2.0 over stdio.
+
 Stage S0 (setup) of the [specification](docs/specification.md): the application starts the core, initializes it,
 shows its log, and offers a restart if it stops.
 
