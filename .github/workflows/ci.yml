@@ -69,6 +69,9 @@ jobs:
       - run: cmake --preset dev
       - run: cmake --build --preset dev
       - run: ctest --preset dev
+      - name: Failed tests, again, with their full output
+        if: failure()
+        run: ctest --preset dev --rerun-failed --extra-verbose
 
   format:
     name: clang-format
