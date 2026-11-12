@@ -124,6 +124,20 @@ Everything a professional embedded developer expects, plus what only an RTOS-awa
 | RTOS | Threads and their states, objects, stacks and high-water marks, the timeline |
 | Trouble | Fault analyzer, crash-record decoding, SWO/ITM console and trace |
 
+**First draft, 2026-11-12** (artboard "Direction B + C · Debug"), halted at a breakpoint on the NUCLEO-F446RE:
+
+- the controls in the toolbar (continue, pause, step over, into, out, by instruction, reset, stop) and a status pill
+  that says why the target stopped: a breakpoint, a step, a watchpoint, a pause;
+- the RTOS threads from the debug descriptor, each with its state and stack high-water mark, and the call stack of
+  the selected one, from its live registers or from the context the kernel saved;
+- breakpoints and watchpoints, with the hardware they use (Cortex-M4: 6 FPB comparators, 4 DWT comparators);
+- the source with the Thumb-2 disassembly interleaved, the current line and instruction, values shown inline;
+- variables: locals, a watch list, and live expressions read over SWD while the target runs;
+- core and FPU registers, the ones the last step changed in amber; peripheral registers decoded from the SVD, with
+  their fields, writable while halted;
+- a bottom panel: the console (UART, ITM over SWO, GDB), memory as bytes, words or the typed struct, the RTOS timeline
+  from the trace ring, the kernel objects live, and the last crash record decoded, linked back to Configure › RTOS.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
