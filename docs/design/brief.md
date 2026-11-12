@@ -92,6 +92,24 @@ The owner's reference is Microchip's MPLAB Code Configurator (MCC), its device r
   threads at one priority, a timer period that is not a whole number of ticks, no debug descriptor.
 - In the Debug stage the same graph comes alive: threads light up as they run, queues fill and drain.
 
+## 3b. Every board, every chip
+
+EmbLink Studio supports every board EmbLinkRTOS describes: 12 boards of 7 families today, from an 8-bit AVR to
+simulated boards with no pins. **No screen is designed for one chip.** The mockups show the NUCLEO-F446RE only as an
+example; every screen draws from the board's resolved model (`hw.json`), as the specification requires (§4, §6).
+
+| What changes per chip | How the screens adapt |
+| --- | --- |
+| The package (`lqfp64`, `lqfp144`, `qfn60`, `pdip28`, none) | The chip is drawn from it: four sides for QFP and QFN (QFN with its pad), two rows for DIP, a ball grid for BGA. A simulated board (MPS2, QEMU) shows its memory map and peripherals instead |
+| How a pin gets its function: an AF number per pin (STM32), a function slot per GPIO (RP2350), or fixed by the peripheral (AVR) | The pin grid shows `AF7`, `F3`, or a fixed cell that cannot be chosen. Conflicts and moves work the same way for all three |
+| The peripherals and what they offer (DMA, PIO, FPU, MPU) | The catalogue is the chip's; forms show only the sections the chip has, so no DMA section on an ATmega |
+| The clock tree | Every readout (baud error, SCL, ADC rate) is computed by the core from the chip's clocks, never in the GUI |
+| What the kernel supports on the chip | The Kernel page follows the port's `Kconfig` defaults and limits: `tiny` on AVR, reboot on fault, no debug descriptor |
+
+A board is chosen when a project is created (the Start screen), and the board pill in the toolbar shows and changes
+it for an open project. A board the views do not cover fully still opens: what they cannot show is listed read-only
+with its source (specification §1).
+
 ## 4. A complete debugger
 
 Everything a professional embedded developer expects, plus what only an RTOS-aware tool can show:
