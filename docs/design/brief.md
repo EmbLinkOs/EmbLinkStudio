@@ -242,13 +242,31 @@ screen never claims more than the evidence supports.
   (`tools/hil/archive.py`) and shows the entry added to `hardware-runs.json`. A failing or partial run is kept,
   never archived as support.
 
+## 4d. One frame for every screen
+
+The polish pass, 2026-11-12. Configure (Hardware, RTOS, Kernel), Code, Debug, Start and Verify now share one frame:
+
+- **The title bar:** the window controls, the project, the four stages as one segmented control (each a link to
+  its screen), then what belongs to the stage: the board and Generate and Build on Configure, the debug controls and
+  the halt state on Debug, the run target on Verify.
+- **Cards on a dark ground:** each panel is a rounded card (12 px) on a near-black ground, 6 px apart, as in Code.
+  Inside a card, groups are a faint fill with hairline separators, the way System Settings groups its rows.
+- **The same controls everywhere:** segmented controls, switches with a shadowed knob, status dots, a toast at the
+  bottom, and one palette for state (cyan for the selection and actions, green passed, amber warning, red error).
+- **Configure › Hardware** gains a finer chip, peripheral cards with a colour edge, a legend that selects, a
+  floating zoom control, peripherals listed with their own tiles, and memory shown as capacity bars. The behaviour
+  is unchanged: live readouts, conflicts and the fix, the pin manager and the pin grid.
+- **Configure › Kernel** moves its search and the Hardware | RTOS | Kernel switch into the header of its centre card.
+- **Debug** splits threads, the call stack and breakpoints into cards, puts the editor and the panel in two cards,
+  and uses segmented tabs for the inspector.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
    specification chose Widgets for the frame (§11 q2), and the docking library (Qt Advanced Docking System) is
    Widgets-only. Before deciding, build the same small screen both ways and compare.
 2. **Light appearance.** Dark is designed first; a light appearance, as macOS offers, follows the same tokens.
-3. **The other screens:** each has a first draft; Configure and Debug get the same polish as Code and Start.
+3. **The other screens:** every screen has a draft in the common frame (§4d). Next: the signature moments.
 4. **Drawing a connection:** dragging from a thread to an object to say who uses it.
 5. **The word for IDE plug-ins.** "Module" already means a firmware code package (EmbLinkRTOS-parts, specification §5,
    §8). The mockups say **extension** for IDE plug-ins such as Git, to keep the two apart; the owner decides.
