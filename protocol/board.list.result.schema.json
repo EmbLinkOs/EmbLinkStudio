@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "board.list: result",
+  "type": "object",
+  "properties": {
+    "rtos": {
+      "type": "object",
+      "properties": {
+        "root": {
+          "type": "string"
+        },
+        "generator": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "schema_version": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "version",
+            "schema_version"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "root",
+        "generator"
+      ],
+      "additionalProperties": false
+    },
+    "boards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "generated": {
+            "type": "boolean"
+          },
+          "board": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "vendor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "revision": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "curated": {
+                "type": "boolean"
+              },
+              "soc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "package": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "core": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cpu_hz": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "soc",
+              "cpu_hz"
+            ],
+            "additionalProperties": false,
+            "description": "A board in one line, from its hw.json."
+          },
+          "problem": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "path",
+          "generated"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "rtos",
+    "boards"
+  ],
+  "additionalProperties": false
+}

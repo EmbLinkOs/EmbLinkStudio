@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "generate.run: result",
+  "type": "object",
+  "properties": {
+    "written": {
+      "type": "boolean"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "board": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "vendor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "curated": {
+          "type": "boolean"
+        },
+        "soc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "family": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "package": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "core": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cpu_hz": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "soc",
+        "cpu_hz"
+      ],
+      "additionalProperties": false,
+      "description": "A board in one line, from its hw.json."
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "enum": [
+              "error",
+              "warning"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string",
+            "description": "Absolute path."
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "path": {
+            "type": "string",
+            "description": "The node's path in the YAML, such as pins.usart2.tx; (root) for the document."
+          }
+        },
+        "required": [
+          "severity",
+          "source",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "errors": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "warnings": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "written",
+    "files",
+    "diagnostics",
+    "errors",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "project.open: parameters",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "A board directory of an EmbLinkRTOS checkout, boards/<vendor>/<board>/."
+    }
+  },
+  "required": [
+    "path"
+  ],
+  "additionalProperties": false
+}

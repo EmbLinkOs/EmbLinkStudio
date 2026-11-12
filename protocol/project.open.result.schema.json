@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "project.open: result",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "const": "board",
+      "description": "In stage S1, a workspace is a board of an RTOS checkout."
+    },
+    "path": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "description": "Such as st/nucleo_f446re."
+    },
+    "name": {
+      "type": "string"
+    },
+    "rtos": {
+      "type": "object",
+      "properties": {
+        "root": {
+          "type": "string"
+        },
+        "generator": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "schema_version": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "version",
+            "schema_version"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "root",
+        "generator"
+      ],
+      "additionalProperties": false
+    },
+    "trusted": {
+      "type": "boolean",
+      "description": "Whether the checkout may run its generator (spec section 9)."
+    },
+    "generated": {
+      "type": "boolean",
+      "description": "Whether generated/hw.json exists."
+    },
+    "board": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "vendor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "curated": {
+          "type": "boolean"
+        },
+        "soc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "family": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "package": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "core": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cpu_hz": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "soc",
+        "cpu_hz"
+      ],
+      "additionalProperties": false,
+      "description": "A board in one line, from its hw.json."
+    }
+  },
+  "required": [
+    "kind",
+    "path",
+    "id",
+    "name",
+    "rtos",
+    "trusted",
+    "generated"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "board.memory: result",
+  "type": "object",
+  "properties": {
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "base": {
+            "type": "integer"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "attrs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "base",
+          "size"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "flash": {
+      "type": "object"
+    },
+    "linker": {
+      "type": "object"
+    },
+    "partitions": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "regions",
+    "flash",
+    "linker",
+    "partitions"
+  ],
+  "additionalProperties": false
+}

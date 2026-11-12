@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "board.list: parameters",
+  "type": "object",
+  "properties": {
+    "rtos": {
+      "type": "string",
+      "description": "A checkout; the open workspace's when absent."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -276,7 +276,7 @@ Ten stages, each ending in something usable and demonstrated. S0 is done: CI bui
 | Stage | Delivers | Accepted when | Needs from the RTOS | Status |
 | --- | --- | --- | --- | --- |
 | **S0 Setup** | The EmbLink Studio repository, its licence files and contributor agreement, CI on Windows, Linux and macOS, a Qt application that starts and talks to a stub core | CI builds and tests on all three systems; `initialize` and `shutdown` succeed; the notices list is generated | Nothing | Done |
-| **S1 Core foundation** | `emblink-studio-core serve`, `project.open` and `validate`, `board.*` from `hw.json`, `generate.run` | Opening the RTOS's `nucleo_f446re` and `pico2_w` boards shows their model; validation reports the generator's errors with their locations | JSON diagnostics from `emb-hwgen`; a versioned `hw.json` | Not started |
+| **S1 Core foundation** | `emblink-studio-core serve`, `project.open` and `validate`, `board.*` from `hw.json`, `generate.run` | Opening the RTOS's `nucleo_f446re` and `pico2_w` boards shows their model; validation reports the generator's errors with their locations | JSON diagnostics from `emb-hwgen`; a versioned `hw.json` | In progress |
 | **S2 Read-only views** | Board, pin map, clock tree, devices, memory, RTOS, problems | For both boards, a golden test finds every value in the views equal to `hw.json` and to the generator's `board.md` and `build_report.md` | Existing outputs | Not started |
 | **S3 Editing** | `config.preview`, `apply`, `undo`; pins, devices and threads editable; live diagnostics | A pin conflict is refused with the generator's message; an edit's `git diff` touches only the lines it must; generation stays clean | `system.yaml` (E3) for threads | Not started |
 | **S4 Build, flash, console** | Toolchain discovery, CMake build, flash by OpenOCD and picotool, serial console | A project is created, built, flashed and seen running on the NUCLEO-F446RE and the Pico 2 W; in CI, on EmbSIM's `nucleo_f446re` | The CMake package (A91) | Not started |
@@ -290,8 +290,8 @@ Ten stages, each ending in something usable and demonstrated. S0 is done: CI bui
 
 | EmbLink Studio needs | Status in EmbLinkRTOS | First needed |
 | --- | --- | --- |
-| Machine-readable diagnostics from the generator (JSON) | To add, early | S1 |
-| A version field in `hw.json` and a published schema for it | To add, early | S1 |
+| Machine-readable diagnostics from the generator (JSON) | To add, early. Until then the core reads its documented line format (HW-002) | S1 |
+| A version field in `hw.json` and a published schema for it | Exists: `schema_version` and `hw/schemas/hw.schema.json` | S1 |
 | `hw.json` and the generated outputs for each board | Exists | S1 |
 | `emb-hwgen generate` and `check` | Exists | S1 |
 | The CMake package for applications outside the tree | Exists (A91) | S4 |

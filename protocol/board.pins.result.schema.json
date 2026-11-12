@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "board.pins: result",
+  "type": "object",
+  "properties": {
+    "package": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "assigned": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pin": {
+            "type": "string"
+          },
+          "port": {
+            "type": "string"
+          },
+          "number": {
+            "type": "integer"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "gpio": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "signal": {
+            "type": "string"
+          },
+          "af": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pin",
+          "mode",
+          "owner"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "alternate_functions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "ports": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "package",
+    "assigned",
+    "alternate_functions",
+    "ports"
+  ],
+  "additionalProperties": false
+}
