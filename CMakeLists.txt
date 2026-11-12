@@ -20,7 +20,15 @@ option(EMBLINK_STUDIO_BUILD_TESTS "Build the Qt tests" ON)
 find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets LinguistTools)
 qt_standard_project_setup()
 
-# The Python that runs the core during development (spec section 11, question 4).
+# The Python that runs the core during development (spec section 11, question 4): the core's own
+# environment when it exists (docs/development.md makes it in core/.venv), so the core runs with
+# its dependencies, PyYAML for the RTOS's generator among them; any Python 3.11+ otherwise.
+foreach(candidate "${PROJECT_SOURCE_DIR}/core/.venv/bin/python"
+                  "${PROJECT_SOURCE_DIR}/core/.venv/Scripts/python.exe")
+    if(NOT DEFINED Python3_EXECUTABLE AND EXISTS "${candidate}")
+        set(Python3_EXECUTABLE "${candidate}")
+    endif()
+endforeach()
 find_package(Python3 3.11 REQUIRED COMPONENTS Interpreter)
 
 if(EMBLINK_STUDIO_BUILD_TESTS)

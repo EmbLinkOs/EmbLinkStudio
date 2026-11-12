@@ -18,6 +18,7 @@
  * Options, for development and for the pictures in progress-screenshots/:
  *   --language <en|fr|zh_CN>  use this language for this run, without saving it
  *   --stage <configure|code|debug|verify>  open on this stage
+ *   --open <board>            open this board of an EmbLinkRTOS checkout
  *   --screenshot <file>       save a picture of the window to <file>, then quit
  *
  * @see     mainwindow.h, theme.h, language.h
@@ -53,7 +54,11 @@ int main(int argc, char *argv[])
         QStringLiteral("screenshot"),
         QStringLiteral("Save a picture of the window to <file>, then quit."),
         QStringLiteral("file"));
-    parser.addOptions({languageOption, stageOption, screenshotOption});
+    const QCommandLineOption openOption(
+        QStringLiteral("open"),
+        QStringLiteral("Open <board>, a board directory of an EmbLinkRTOS checkout."),
+        QStringLiteral("board"));
+    parser.addOptions({languageOption, stageOption, openOption, screenshotOption});
     parser.process(app);
 
     emblinkstudio::Language language(&app);
@@ -74,12 +79,14 @@ int main(int argc, char *argv[])
     emblinkstudio::MainWindow window(&language);
     if (parser.isSet(stageOption))
         window.setStage(parser.value(stageOption));
+    if (parser.isSet(openOption))
+        window.openBoard(parser.value(openOption));
     window.show();
 
     if (parser.isSet(screenshotOption)) {
         const QString file = parser.value(screenshotOption);
-        // Long enough for the core to answer and the stage switch to settle.
-        QTimer::singleShot(1500, &window, [&window, &app, file] {
+        // Long enough for the core to open and validate a board, and the stage switch to settle.
+        QTimer::singleShot(3000, &window, [&window, &app, file] {
             if (!window.grab().save(file))
                 qWarning("Cannot save %s", qPrintable(file));
             app.exit(0);

@@ -27,9 +27,12 @@
  * @date    2026-11-11 (created)
  */
 
+#include "boardview.h"
 #include "language.h"
 #include "mainwindow.h"
+#include "problemsview.h"
 #include "segmentedcontrol.h"
+#include "session.h"
 #include "settingsdialog.h"
 #include "theme.h"
 #include "workbench.h"
@@ -37,19 +40,25 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QFile>
+#include <QFileDialog>
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSettings>
 #include <QTextBrowser>
 #include <QToolBar>
+#include <QUrl>
 #include <QVBoxLayout>
+#include <utility>
 
 namespace emblinkstudio
 {
@@ -103,9 +112,20 @@ MainWindow::MainWindow(Language *language, QWidget *parent)
     m_log->setMaximumBlockCount(5000);
     m_log->setFont(theme.font(QStringLiteral("code")));
 
+    m_session = new Session(&m_core, this);
+    m_boardView = new BoardView;
+    m_problems = new ProblemsView;
+
     // The ids name the views in saved layouts: keep them stable.
-    m_workbench->addView(QStringLiteral("core"), QString(), coreView, ads::CenterDockWidgetArea);
-    m_workbench->addView(QStringLiteral("coreLog"), QString(), m_log, ads::BottomDockWidgetArea);
+    m_workbench->addView(QStringLiteral("board"), QString(), m_boardView,
+                         ads::CenterDockWidgetArea);
+    ads::CDockWidget *problems = m_workbench->addView(QStringLiteral("problems"), QString(),
+                                                      m_problems, ads::BottomDockWidgetArea);
+    m_workbench->addView(QStringLiteral("coreLog"), QString(), m_log, ads::BottomDockWidgetArea,
+                         problems);
+    m_workbench->addView(QStringLiteral("core"), QString(), coreView, ads::BottomDockWidgetArea,
+                         problems);
+    problems->setAsCurrentTab();
     m_workbench->captureDefaultLayout();
 
     buildStageBar();
@@ -121,6 +141,29 @@ MainWindow::MainWindow(Language *language, QWidget *parent)
     if (m_workbench->stage().isEmpty())
         m_workbench->setStage(stageIds().first());
 
+    connect(m_session, &Session::statusChanged, this, &MainWindow::retranslate);
+    connect(m_session, &Session::modelChanged, this, &MainWindow::showModel);
+    connect(m_session, &Session::diagnosticsChanged, this, [this] {
+        m_problems->setDiagnostics(m_session->diagnostics(), m_session->isOpen(),
+                                   m_session->hasVerdict(), m_session->isValid());
+    });
+    connect(m_session, &Session::busyChanged, m_problems, &ProblemsView::setBusy);
+    connect(m_session, &Session::opened, this, [this] {
+        rememberBoard(m_session->status().value(QStringLiteral("path")).toString());
+    });
+    connect(m_session, &Session::trustNeeded, this,
+            [this](const QString &checkout, Session::Action action) {
+                askTrust(checkout, int(action));
+            });
+    connect(m_session, &Session::failed, this, [this](const QString &message) {
+        QMessageBox::warning(this, tr("EmbLink Studio"), message);
+    });
+    connect(m_problems, &ProblemsView::validateRequested, m_session, &Session::validate);
+    connect(m_problems, &ProblemsView::openRequested, this, [](const QString &file, int) {
+        // No editor yet (stage S8): the person's own editor opens the file.
+        QDesktopServices::openUrl(QUrl::fromLocalFile(file));
+    });
+
     connect(m_restart, &QPushButton::clicked, this, &MainWindow::startCore);
     connect(&m_core, &CoreClient::logLine, m_log, &QPlainTextEdit::appendPlainText);
     connect(&m_core, &CoreClient::ready, this, [this](const QJsonObject &info) {
@@ -131,6 +174,11 @@ MainWindow::MainWindow(Language *language, QWidget *parent)
         setStatus(
             [=] { return tr("Connected to %1 %2, protocol %3.").arg(name, version, protocol); },
             CoreState::Connected);
+        // After a restart, the board that was open opens again; at start, the one asked for.
+        if (!m_pendingOpen.isEmpty())
+            m_session->open(std::exchange(m_pendingOpen, QString()));
+        else
+            m_session->reopen();
     });
     connect(&m_core, &CoreClient::failed, this, [this](const QString &message) {
         setStatus([=] { return message; }, CoreState::Stopped);
@@ -193,6 +241,12 @@ void MainWindow::buildStageBar()
 void MainWindow::buildMenus()
 {
     m_fileMenu = menuBar()->addMenu(QString());
+    m_openAction = m_fileMenu->addAction(QString(), this, &MainWindow::chooseBoard);
+    m_openAction->setShortcut(QKeySequence::Open);
+    m_recentMenu = m_fileMenu->addMenu(QString());
+    connect(m_recentMenu, &QMenu::aboutToShow, this, &MainWindow::fillRecentMenu);
+    m_closeAction = m_fileMenu->addAction(QString(), m_session, &Session::close);
+    m_fileMenu->addSeparator();
     m_settingsAction = m_fileMenu->addAction(QString(), this, &MainWindow::showSettings);
     m_settingsAction->setShortcut(QKeySequence::Preferences);
     m_settingsAction->setMenuRole(QAction::PreferencesRole);
@@ -217,6 +271,12 @@ void MainWindow::buildMenus()
     m_saveLayoutAction = m_viewMenu->addAction(QString(), this, &MainWindow::saveLayoutAs);
     m_resetLayoutAction = m_viewMenu->addAction(QString(), m_workbench, &Workbench::resetLayout);
 
+    m_boardMenu = menuBar()->addMenu(QString());
+    m_validateAction = m_boardMenu->addAction(QString(), m_session, &Session::validate);
+    m_generateAction = m_boardMenu->addAction(QString(), m_session, &Session::generate);
+    // ⌥⌘G (design brief section 4g); Ctrl+Alt+G elsewhere.
+    m_generateAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_G));
+
     m_helpMenu = menuBar()->addMenu(QString());
     m_aboutAction = m_helpMenu->addAction(QString(), this, &MainWindow::showAbout);
     m_aboutAction->setMenuRole(QAction::AboutRole);
@@ -225,7 +285,10 @@ void MainWindow::buildMenus()
 void MainWindow::retranslate()
 {
     setWindowTitle(tr("EmbLink Studio"));
-    m_project->setText(tr("No project open"));
+    const QJsonObject status = m_session->status();
+    m_project->setText(m_session->isOpen() ? status.value(QStringLiteral("id")).toString()
+                                           : tr("No board open"));
+    m_project->setToolTip(status.value(QStringLiteral("path")).toString());
     const QStringList stages{tr("Configure"), tr("Code"), tr("Debug"), tr("Verify")};
     for (int i = 0; i < int(stages.size()); ++i) {
         m_stages->setSegmentText(i, stages.at(i));
@@ -234,13 +297,24 @@ void MainWindow::retranslate()
     m_stages->setAccessibleName(tr("Stage"));
 
     const QList<ads::CDockWidget *> views = m_workbench->views();
-    views.at(0)->setWindowTitle(tr("Core"));
-    views.at(1)->setWindowTitle(tr("Core log"));
+    views.at(0)->setWindowTitle(tr("Board"));
+    views.at(1)->setWindowTitle(tr("Problems"));
+    views.at(2)->setWindowTitle(tr("Core log"));
+    views.at(3)->setWindowTitle(tr("Core"));
     for (ads::CDockWidget *v : views)
         v->toggleViewAction()->setText(v->windowTitle());
     m_restart->setText(tr("&Restart the core"));
 
     m_fileMenu->setTitle(tr("&File"));
+    m_openAction->setText(tr("&Open Board..."));
+    m_recentMenu->setTitle(tr("Open &Recent"));
+    m_closeAction->setText(tr("&Close Board"));
+    m_closeAction->setEnabled(m_session->isOpen());
+    m_boardMenu->setTitle(tr("&Board"));
+    m_validateAction->setText(tr("&Validate"));
+    m_generateAction->setText(tr("&Generate"));
+    m_validateAction->setEnabled(m_session->isOpen());
+    m_generateAction->setEnabled(m_session->isOpen());
     m_settingsAction->setText(tr("&Settings..."));
     m_quitAction->setText(tr("&Quit"));
     m_viewMenu->setTitle(tr("&View"));
@@ -270,6 +344,75 @@ void MainWindow::setStage(const QString &id)
 QString MainWindow::stage() const
 {
     return m_workbench->stage();
+}
+
+void MainWindow::openBoard(const QString &path)
+{
+    if (m_core.isReady())
+        m_session->open(path);
+    else
+        m_pendingOpen = path;
+}
+
+void MainWindow::chooseBoard()
+{
+    QSettings settings;
+    const QStringList recent = settings.value(QStringLiteral("recentBoards")).toStringList();
+    const QString start = recent.isEmpty() ? QDir::homePath() : recent.first();
+    const QString dir = QFileDialog::getExistingDirectory(
+        this, tr("Open a board of an EmbLinkRTOS checkout, such as boards/st/nucleo_f446re"),
+        start);
+    if (!dir.isEmpty())
+        openBoard(dir);
+}
+
+void MainWindow::rememberBoard(const QString &path)
+{
+    if (path.isEmpty())
+        return;
+    QSettings settings;
+    QStringList recent = settings.value(QStringLiteral("recentBoards")).toStringList();
+    recent.removeAll(path);
+    recent.prepend(path);
+    while (recent.size() > 8)
+        recent.removeLast();
+    settings.setValue(QStringLiteral("recentBoards"), recent);
+}
+
+void MainWindow::fillRecentMenu()
+{
+    m_recentMenu->clear();
+    const QStringList recent = QSettings().value(QStringLiteral("recentBoards")).toStringList();
+    if (recent.isEmpty()) {
+        m_recentMenu->addAction(tr("No recent boards"))->setEnabled(false);
+        return;
+    }
+    for (const QString &path : recent)
+        m_recentMenu->addAction(QDir::toNativeSeparators(path), this,
+                                [this, path] { openBoard(path); });
+}
+
+void MainWindow::askTrust(const QString &checkout, int action)
+{
+    QMessageBox box(QMessageBox::Question, tr("Trust this checkout?"),
+                    tr("Validating and generating run the generator of the EmbLinkRTOS checkout "
+                       "at %1, which is code from that checkout.")
+                        .arg(QDir::toNativeSeparators(checkout)),
+                    QMessageBox::NoButton, this);
+    box.setInformativeText(tr("Trust it only if you know where it comes from. EmbLink Studio "
+                              "remembers your answer for this checkout."));
+    QPushButton *trust = box.addButton(tr("Trust and Continue"), QMessageBox::AcceptRole);
+    box.addButton(QMessageBox::Cancel);
+    box.setDefaultButton(trust);
+    box.exec();
+    if (box.clickedButton() == trust)
+        m_session->trustAndRun(Session::Action(action));
+}
+
+void MainWindow::showModel()
+{
+    m_boardView->setModel(m_session->status(), m_session->describe(), m_session->clocks(),
+                          m_session->memory(), m_session->pins());
 }
 
 void MainWindow::startCore()
