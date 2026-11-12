@@ -260,13 +260,36 @@ The polish pass, 2026-11-12. Configure (Hardware, RTOS, Kernel), Code, Debug, St
 - **Debug** splits threads, the call stack and breakpoints into cards, puts the editor and the panel in two cards,
   and uses segmented tabs for the inspector.
 
+## 4e. Signature moments
+
+Owner, 2026-11-12: build all five (artboard "Signature moments"). Motion everywhere lasts 200 to 400 ms, eases
+out, and starts where the cause is.
+
+1. **Hello, board** (Start). Plugging in a board names it and draws it as it looks, before anything is asked.
+   Identity comes from the probe and the chip's ID code, never a guess. The drawing shows the real board: LD2 in it
+   follows GPIOA ODR read over SWD. The greeting ends in one next step, "New project for this board".
+2. **One click from conflict to fixed** (Configure › Hardware). The conflict glows on the pin and the fix sits
+   beside it, offered only when valid. The route leaves PA5 and draws itself to PB3; amber turns green only when the
+   generator accepts the board.
+3. **Priority is a place** (Configure › RTOS). Dragging a thread snaps it to real levels (never 0, the idle
+   level). The ceiling follows its highest user, and checks appear while dragging, each citing its rule.
+4. **From a crash to the fix** (Debug, Configure › RTOS, Run). The crash record survives the reset. Every claim
+   comes from it (CFSR, BFAR, the stack at the fault). The fix links to the exact field, prefilled, never applied
+   silently, and the next run shows the new high-water mark.
+5. **The hardware seal** (Verify). The seal appears only when every test passed on the board and the run is
+   archived, never from emulation or a partial run. It names the board, the date and the record behind it, and the
+   matrix is regenerated from the archive.
+
+Every pin on the chip in Configure › Hardware now carries its name, and clicking a pin or its name opens its row
+in the pin table.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
    specification chose Widgets for the frame (§11 q2), and the docking library (Qt Advanced Docking System) is
    Widgets-only. Before deciding, build the same small screen both ways and compare.
 2. **Light appearance.** Dark is designed first; a light appearance, as macOS offers, follows the same tokens.
-3. **The other screens:** every screen has a draft in the common frame (§4d). Next: the signature moments.
+3. **The other screens:** every screen has a draft in the common frame (§4d); the signature moments are drafted (§4e).
 4. **Drawing a connection:** dragging from a thread to an object to say who uses it.
 5. **The word for IDE plug-ins.** "Module" already means a firmware code package (EmbLinkRTOS-parts, specification §5,
    §8). The mockups say **extension** for IDE plug-ins such as Git, to keep the two apart; the owner decides.
@@ -276,7 +299,7 @@ The polish pass, 2026-11-12. Configure (Hardware, RTOS, Kernel), Code, Debug, St
 One step at a time, each decision written here before anything is built:
 
 1. The feeling (§1): done.
-2. The signature moments: the 3 to 5 interactions people remember.
+2. The signature moments: drafted, five (§4e).
 3. How you move around: stages, the command palette, the inspector, the keyboard.
 4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere.
 5. The screens, each mocked up and iterated: Configure › Hardware and Configure › RTOS (first drafts done; the
