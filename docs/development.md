@@ -28,6 +28,27 @@ Run the application: `build/dev/app/EmbLinkStudio.app/Contents/MacOS/EmbLinkStud
 `build/dev/app/EmbLinkStudio` elsewhere. It runs the core from `core/src` with the Python CMake found; set
 `EMBLINK_STUDIO_CORE` to an installed `emblink-studio-core` to use that instead.
 
+Options for a run: `--language en|fr|zh_CN` uses that language without saving it, `--stage
+configure|code|debug|verify` opens on that stage, and `--screenshot <file>` saves a picture of the window and
+quits.
+
+## The look and the languages
+
+Every colour, size, font and timing comes from [`docs/design/tokens.json`](design/tokens.json), which the
+build compiles into the application; change the look there, not in the C++. The design brief explains the
+tokens in section 4f.
+
+The interface is in English, French and Simplified Chinese. Write every visible string in English inside
+`tr()`, then refresh the translation files and translate the new strings in Qt Linguist:
+
+```sh
+cmake --build --preset dev --target update_translations   # updates app/i18n/*.ts from the sources
+linguist app/i18n/emblinkstudio_fr.ts app/i18n/emblinkstudio_zh_CN.ts
+```
+
+The build compiles the `.ts` files into the application. A string with no translation shows in English.
+Option keys, pin, register and file names, and code are never translated.
+
 ## The editor
 
 The repository's [`.clangd`](../.clangd) points clangd at `build/dev/compile_commands.json`, so any
@@ -37,7 +58,7 @@ as missing.
 After the first configure, restart the language server (in VS Code: *clangd: Restart language server*).
 
 `progress-screenshots/` is ignored by git: keep pictures of the application as it grows there, on your
-machine only.
+machine only, for example with `--screenshot progress-screenshots/configure-fr.png --language fr`.
 
 ## How a change reaches `main`
 
@@ -58,8 +79,10 @@ Release tags (`v*`) can only be created by the maintainers, and can never be mov
 | Path | What |
 | --- | --- |
 | `app/` | The Qt application and its tests |
+| `app/i18n/` | The French and Simplified Chinese translations |
 | `core/` | EmbLink Studio Core: `emblink-studio-core serve` |
 | `protocol/` | JSON Schemas of every method's parameters and result |
 | `docs/` | The specification and this guide |
+| `docs/design/` | The design brief and the design tokens the application reads |
 | `third_party/components.json` | Every third-party component and its licence |
 | `tools/notices.py` | Checks those licences and writes the notices list for the About box |
