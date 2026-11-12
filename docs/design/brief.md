@@ -177,6 +177,13 @@ bars stack panels and fold them; the panel area shows them as tabs and can be ma
 groups, and tabs move between them. Splitters resize everything. Layouts can be saved, with presets (Default, Focus,
 Review, Terminal), per project (§3, specification §6).
 
+**Polish, 2026-11-12 (owner: "elegant, still pro").** Every area is a card with rounded corners on a darker ground,
+6 px apart. Panel titles in normal case, actions that brighten on hover, a slim indicator in the activity bar, and a
+quiet status bar. Panels, tabs and floating windows are moved by dragging, with docking guides as in Visual Studio:
+release on a guide to dock (left, right, panel area, editor tab, split), anywhere else to float. The Explorer has
+type icons, folders that fold, indent guides, git colours on names and folders, ignored and generated folders
+marked, and a filter.
+
 ### Extensions, Git first
 
 Features that not every user needs are **extensions**, as in VS Code, so they can be turned off: Git, the language
