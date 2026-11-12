@@ -10,10 +10,12 @@
  *
  * @details
  * Shows whether EmbLink Studio Core is connected, offers a restart when the core
- * fails or stops unexpectedly, and shows the core's log in a dock. The window owns
- * the CoreClient for the life of the application.
+ * fails or stops unexpectedly, and shows the core's log. Both are views of the
+ * Workbench, so they can be moved, split, floated and closed, and the layout is kept
+ * from one run to the next. The window owns the CoreClient for the life of the
+ * application.
  *
- * @see     Spec section 4; coreclient.h
+ * @see     Spec sections 4 and 7; coreclient.h, workbench.h
  * @author  Junior Deogracias
  * @date    2026-11-11 (created)
  */
@@ -25,11 +27,14 @@
 #include <QMainWindow>
 
 class QLabel;
+class QMenu;
 class QPlainTextEdit;
 class QPushButton;
 
 namespace emblinkstudio
 {
+
+class Workbench;
 
 // S0's window: the core's state, its log, and a restart if it stops (spec section 4).
 class MainWindow : public QMainWindow
@@ -46,8 +51,12 @@ class MainWindow : public QMainWindow
     void startCore();
     void showAbout();
     void setStatus(const QString &text, bool canRestart);
+    void fillLayoutsMenu();
+    void saveLayoutAs();
 
     CoreClient m_core;
+    Workbench *m_workbench = nullptr;
+    QMenu *m_layouts = nullptr;
     QLabel *m_status = nullptr;
     QPushButton *m_restart = nullptr;
     QPlainTextEdit *m_log = nullptr;

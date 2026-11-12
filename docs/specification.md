@@ -236,6 +236,14 @@ The design is the developer's, within three principles:
 - Every number shown comes from the core, with its source one click away.
 - A change shows its effect (diagnostics, budget) before it is applied.
 
+**The layout is the person's.** Every view is a dock of Qt Advanced Docking System (§11 q1), the editor and the drawn views included. It can be moved, split, tabbed, floated onto another monitor, closed and reopened, and no view is fixed in place.
+
+- The layout is saved when the window closes and restored when it opens: per project in `.emblink-studio/` (§6), and in the user's settings while no project is open.
+- Layouts can be saved by name, such as Configure, Code and Debug, and opened from the View menu. Starting a debug session may switch to one, as a perspective does in other IDEs.
+- Reset layout brings back the default.
+- A view's id names it in saved layouts and never changes. A layout saved by another layout version is ignored, never half applied.
+- Inside a view, the view lays out its own content.
+
 | View | Shows and does | From |
 | --- | --- | --- |
 | **Start** | New project from a board or a template; recent projects | `project`, `board.list` |
@@ -303,7 +311,7 @@ Until the module contract and `system.yaml` exist, S1 to S3 work on what exists:
 - **Widgets and Quick:** Qt Widgets for the frame, docking, tables and forms. Qt Quick, in `QQuickWidget`s, for the drawn views: pin map, clock tree, and later the trace timeline (§11).
 - **Third-party libraries:** only under licences compatible with the open core: MIT, BSD, Apache-2.0, LGPL linked dynamically, MPL-2.0. **No GPL libraries** in the application. Some terminal and docking widgets are GPL, so check each one. GPL tools (GDB, OpenOCD) run as separate programs and are never linked. Toolchains are downloaded from their publishers, not bundled.
 - **A notices list** of every component and its licence, C++ and Python alike, generated in CI and shown in the About box. CI fails on a licence that is not on the allowed list.
-- **Tests:** Qt Test for the application; pytest for the core; JSON Schema checks of every message in both directions; golden projects (the RTOS's boards) whose generated outputs, YAML edits and builds are compared in CI; the GUI tested against a recorded core.
+- **Tests:** Qt Test for the application; pytest for the core; JSON Schema checks of every message in both directions; golden projects (the RTOS's boards) whose generated outputs, YAML edits and builds are compared in CI; the GUI tested against a recorded core; a test that every view can be moved, floated and closed, and that a layout saved is the layout restored (§7).
 - **Reproducibility:** pinned dependencies, pinned toolchains with checksums, the lock file. The same project gives the same build in the IDE and on the command line.
 - **Code:** clang-format for C++, ruff for Python; every commit signed off (`Signed-off-by`, the DCO).
 - **Accessibility and languages:** keyboard navigation throughout; Qt's translation system from the start, even with only English at first.
