@@ -217,13 +217,38 @@ blueprints); the connected board as the hero of the welcome window; recent proje
 new project as a sheet over the window, with a vendor sidebar, template cards that preview their threads and queues,
 a System Settings form beside a live `emb-project.yaml`, and creation shown on the board, whose LED lights when done.
 
+## 4c. Verify
+
+First draft, 2026-11-12 (artboard "Direction B + C · Verify"). Verify is where a project gets its evidence, under the
+rules EmbLinkRTOS already keeps (`docs/engineering/timing-and-evidence.md`, the support matrix, the HIL records). The
+screen never claims more than the evidence supports.
+
+- **Run on** the board (through its probe) or its emulator (EmbSIM, QEMU), in the checked or release build. **Run
+  suite** flashes each test image, checks that the flashed image is the one built (`image_sha256` against
+  `flashed_sha256`), and streams results in as they arrive.
+- **Two suites:** EmbLinkRTOS on this board (for the NUCLEO-F446RE: 41 images, 254 cases, grouped as kernel,
+  interrupts and the port, devices and drivers, faults and crash records, benchmarks) and the project's own tests.
+- **Each image** shows its cases with the real outcomes: passed, failed, expected failure, skipped with a reason,
+  disabled, not run. A failed case shows its message and **Debug this case**, which opens Debug on that image,
+  stopped where it failed.
+- **The support tier** of the board (1 hardware, 2 emulated, 3 described), from the generated matrix, never declared
+  by the board; the history of archived runs; the other boards in the matrix.
+- **Console, Run record and Benchmarks** below: the `hil:` console, the `emb-hil-archive v1` record (board, preset,
+  build, configuration, git commit, port, flash command, hashes), and benchmarks against FreeRTOS built the same way.
+- **What this evidence supports:** each claim marked as supported, qualified or not supported, with its basis. A
+  benchmark is a measured mean, not a maximum and not a bound; an emulator run is functional evidence only
+  (SIM-003); worst-case latency needs an established bound before it can be claimed.
+- **Archive as evidence** is offered only for a hardware run where everything passed. It files the records
+  (`tools/hil/archive.py`) and shows the entry added to `hardware-runs.json`. A failing or partial run is kept,
+  never archived as support.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
    specification chose Widgets for the frame (§11 q2), and the docking library (Qt Advanced Docking System) is
    Widgets-only. Before deciding, build the same small screen both ways and compare.
 2. **Light appearance.** Dark is designed first; a light appearance, as macOS offers, follows the same tokens.
-3. **The other screens:** Start, Code, Debug, Verify.
+3. **The other screens:** each has a first draft; Configure and Debug get the same polish as Code and Start.
 4. **Drawing a connection:** dragging from a thread to an object to say who uses it.
 5. **The word for IDE plug-ins.** "Module" already means a firmware code package (EmbLinkRTOS-parts, specification §5,
    §8). The mockups say **extension** for IDE plug-ins such as Git, to keep the two apart; the owner decides.
