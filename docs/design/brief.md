@@ -53,10 +53,18 @@ The owner's reference is Microchip's MPLAB Code Configurator (MCC), its device r
 - Every change still goes through the core into `board.yaml` and `system.yaml`, shown as a diff before anything is
   written (specification §5, §6).
 
-**From MCC, still to bring in** (its Pin Manager and Pins view): per-pin *start high*, analog, direction, weak
-pull-up, open-drain and interrupt-on-change; and its **pin grid**, functions in rows and pins in columns, each cell a
-lock that is free, taken or locked. The first draft's pin and peripheral options are too few: the next round widens
-both (owner, 2026-11-12).
+**Widened on 2026-11-12, after the owner's feedback on the first draft:**
+
+- **Pin manager:** every I/O pin with its mode (input, output, analog, alternate), pull, output type, speed, start
+  level and interrupt edge, each active only where the mode allows it; filters for pins in use, free pins and all
+  50; board-wired pins (the LED, the button, the ST-LINK) fixed by the board description.
+- **Pin grid,** as in MCC: functions down, the 50 I/O pins across grouped by port, each cell free, assigned, in
+  conflict, or fixed and locked. A click moves a function to another pin that can carry it; for the ADC it picks
+  channels.
+- **Peripheral forms in sections** (basic, advanced, interrupts and DMA, driver): flow control, filters, triggers,
+  prescalers, the DMA stream and channel each request uses, interrupt priorities, the EmbLinkRTOS driver class, the
+  device name and the devices on a bus. Checks such as an ADC clock above 36 MHz, or a button pull-down fighting the
+  board's pull-up.
 
 ## 3a. Configuring the RTOS
 
