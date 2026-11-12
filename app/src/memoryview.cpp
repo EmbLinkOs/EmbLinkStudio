@@ -222,6 +222,8 @@ void MemoryView::render()
             units = tr("pages %1 to %2")
                         .arg(part.value(QStringLiteral("pages")).toArray().at(0).toInt())
                         .arg(part.value(QStringLiteral("pages")).toArray().at(1).toInt());
+        if (units.isEmpty())
+            units = QStringLiteral("—"); // no erase units given, as board.md writes it
         const QString name = part.value(QStringLiteral("name")).toString();
         const bool reserved = part.value(QStringLiteral("reserved")).toBool();
         partitions.append({reserved ? tr("%1 (reserved)").arg(name) : name,

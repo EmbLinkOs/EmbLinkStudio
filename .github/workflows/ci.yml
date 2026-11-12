@@ -95,6 +95,8 @@ jobs:
       - name: Failed tests, again, with their full output
         if: failure()
         run: ctest --preset dev --rerun-failed --extra-verbose
+        env:
+          EMBLINK_STUDIO_TEST_RTOS: ${{ github.workspace }}/rtos
 
   format:
     name: clang-format

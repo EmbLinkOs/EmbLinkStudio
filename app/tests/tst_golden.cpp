@@ -57,7 +57,11 @@ QString rtos()
 QString read(const QString &path)
 {
     QFile file(path);
-    return file.open(QIODevice::ReadOnly) ? QString::fromUtf8(file.readAll()) : QString();
+    // A checkout made on Windows may have CRLF line ends.
+    return file.open(QIODevice::ReadOnly)
+               ? QString::fromUtf8(file.readAll())
+                     .replace(QStringLiteral("\r\n"), QStringLiteral("\n"))
+               : QString();
 }
 
 // The rows of the Markdown table under `heading`, without its header, backticks removed.
@@ -264,7 +268,9 @@ class TestGolden : public QObject
             QCOMPARE(shownParts.at(i).at(0).section(QLatin1Char(' '), 0, 0), parts.at(i).at(0));
             QCOMPARE(shownParts.at(i).at(1), parts.at(i).at(1));
             QCOMPARE(shownParts.at(i).at(2), formatBytes(bytes(parts.at(i).at(2))));
-            QCOMPARE(shownParts.at(i).at(3), parts.at(i).at(3));
+            QCOMPARE(
+                QString(shownParts.at(i).at(3)).replace(QStringLiteral("—"), QStringLiteral("-")),
+                parts.at(i).at(3));
         }
         const QList<QStringList> image = table(m_report, QStringLiteral("## Image layout"));
         const QList<QStringList> shownImage = memory.rows(MemoryView::Group::Image);
