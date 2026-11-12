@@ -168,6 +168,22 @@ Only EmbLink Studio:
 - **Completion that knows contexts:** each function says whether it is safe in an interrupt.
 - **Generated code read-only,** with a banner pointing to Configure; renaming a generated name sends you to its source.
 
+### Every part is a panel (owner, 2026-11-12)
+
+As in VS Code, and further: Explorer, Outline, Source Control, Commits, Problems, Build, Terminal, Serial and
+Extensions are each a panel of their own, with their own scroll. Any panel can be dragged by its title, or moved from
+its menu, to the left or right side bar, the panel area below, the editor area as a tab, or a floating window. Side
+bars stack panels and fold them; the panel area shows them as tabs and can be maximized. The editor splits into
+groups, and tabs move between them. Splitters resize everything. Layouts can be saved, with presets (Default, Focus,
+Review, Terminal), per project (§3, specification §6).
+
+### Extensions, Git first
+
+Features that not every user needs are **extensions**, as in VS Code, so they can be turned off: Git, the language
+server, the serial monitor, the trace timeline, the EmbSIM runner. **Git** is built in: stage, unstage, commit with
+the DCO sign-off on by default, push, branches, the commit graph, diffs in the editor, change bars and blame. Turning
+an extension off removes its panels and its decorations in the editor.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
@@ -176,6 +192,8 @@ Only EmbLink Studio:
 2. **Light appearance.** Dark is designed first; a light appearance, as macOS offers, follows the same tokens.
 3. **The other screens:** Start, Code, Debug, Verify.
 4. **Drawing a connection:** dragging from a thread to an object to say who uses it.
+5. **The word for IDE plug-ins.** "Module" already means a firmware code package (EmbLinkRTOS-parts, specification §5,
+   §8). The mockups say **extension** for IDE plug-ins such as Git, to keep the two apart; the owner decides.
 
 ## 6. How the design proceeds
 
