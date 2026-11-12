@@ -41,6 +41,7 @@ def validate(board_dir):
     except CoreError as exc:
         pytest.fail(f"{exc.message}\n{(exc.data or {}).get('output', '')}")
 
+
 BOARDS = {
     # board: (part, cpu_hz, a pin in use and its signal, the first memory region)
     "st/nucleo_f446re": ("STM32F446RE", 180_000_000, ("PA2", "usart2_tx"), "flash"),
