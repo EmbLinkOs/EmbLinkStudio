@@ -99,6 +99,10 @@ if(EMBLINK_STUDIO_BUILD_TESTS)
         target_link_libraries(${test} PRIVATE emblink_studio_ui Qt6::Test)
         add_test(NAME ${test} COMMAND ${test})
     endforeach()
+    # qt_standard_project_setup() makes executables GUI programs on Windows and bundles on
+    # macOS; a test is a console program, so its output reaches CTest on every system.
+    set_target_properties(tst_framing tst_coreclient tst_workbench tst_theme tst_segmentedcontrol
+        tst_language PROPERTIES WIN32_EXECUTABLE OFF MACOSX_BUNDLE OFF)
     target_compile_definitions(tst_theme PRIVATE
         EMBLINK_STUDIO_TOKENS="${PROJECT_SOURCE_DIR}/docs/design/tokens.json")
 endif()
