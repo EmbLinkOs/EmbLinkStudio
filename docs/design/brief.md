@@ -210,6 +210,13 @@ First draft, 2026-11-12 (artboard "Direction B + C · Start"):
   first build and its sizes. Then: open in Configure or Code, or flash and run.
 - **A cloned project opens untrusted** (specification §9): its files are shown, nothing in it runs until trusted.
 
+**Second draft (owner, 2026-11-12: "good ideas, implementation far below the other screens").** Rebuilt to the
+standard of Code: each board drawn as it looks (the NUCLEO's white board with its ST-LINK part and blinking LD2, the
+Pico 2 W's slim green board, the Uno's teal board, the micro:bit's LED matrix, the ESP32 modules, simulated boards as
+blueprints); the connected board as the hero of the welcome window; recent projects grouped by date with their board;
+new project as a sheet over the window, with a vendor sidebar, template cards that preview their threads and queues,
+a System Settings form beside a live `emb-project.yaml`, and creation shown on the board, whose LED lights when done.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
