@@ -68,9 +68,18 @@ both (owner, 2026-11-12).
   receives, locks, takes, waits or runs. **Interrupts** feed them from the right.
 - **Computed live:** a ceiling mutex's ceiling follows its highest user (SPEC-005 §3.4), drawn on the axis; stacks,
   queue buffers and the kernel's own memory go into the RAM budget.
-- **Kernel settings**, grouped as EmbLinkRTOS's `Kconfig` groups them (build, scheduler, time, threads,
-  synchronization, communication, interrupts, faults, observability). Each shows its option name (`EMB_TICK_NS`)
-  and the specification or requirement it comes from.
+- **Kernel settings get a full page of their own: Configure › Kernel** (the owner, 2026-11-12: too important for the
+  inspector). Laid out like macOS System Settings:
+  - categories on the left (profile and build, scheduler, time, threads, synchronization, communication, timers and
+    work queues, devices and drivers, objects, interrupts, faults, observability), each with a count of changed
+    settings and a dot when one has a warning;
+  - the reference **profile** as large cards (tiny, base, isolated; multicore and native shown, and why they do not
+    apply to this chip). Settings not changed by hand follow the profile;
+  - every option with its help text from `Kconfig`, its key, its reference, its default, a reset, and why it is
+    greyed out when a dependency is missing ("Needs priority inheritance: the bus is held by a mutex");
+  - search across all options, and a "changed only" filter;
+  - an **effect panel**: the RAM change, the checks (also across screens: the I2C driver that I2C1 needs), and the
+    exact `system.yaml` diff, applied only when no check is red.
 - **Checks in place:** a priority out of range, a queue item above `EMB_MSGQ_MAX_ITEM`, time slicing with no two
   threads at one priority, a timer period that is not a whole number of ticks, no debug descriptor.
 - In the Debug stage the same graph comes alive: threads light up as they run, queues fill and drain.
