@@ -53,6 +53,28 @@ The owner's reference is Microchip's MPLAB Code Configurator (MCC), its device r
 - Every change still goes through the core into `board.yaml` and `system.yaml`, shown as a diff before anything is
   written (specification §5, §6).
 
+**From MCC, still to bring in** (its Pin Manager and Pins view): per-pin *start high*, analog, direction, weak
+pull-up, open-drain and interrupt-on-change; and its **pin grid**, functions in rows and pins in columns, each cell a
+lock that is free, taken or locked. The first draft's pin and peripheral options are too few: the next round widens
+both (owner, 2026-11-12).
+
+## 3a. Configuring the RTOS
+
+**Configure › RTOS**, beside **Configure › Hardware**. The same canvas idea, applied to `system.yaml`:
+
+- **Threads sit on a priority axis**, so changing a priority moves the thread. Kernel threads (the system work queue,
+  idle) are shown too, set by the kernel settings.
+- **Objects** (queues, mutexes, semaphores, event flags, timers) sit between the threads, and lines say who sends,
+  receives, locks, takes, waits or runs. **Interrupts** feed them from the right.
+- **Computed live:** a ceiling mutex's ceiling follows its highest user (SPEC-005 §3.4), drawn on the axis; stacks,
+  queue buffers and the kernel's own memory go into the RAM budget.
+- **Kernel settings**, grouped as EmbLinkRTOS's `Kconfig` groups them (build, scheduler, time, threads,
+  synchronization, communication, interrupts, faults, observability). Each shows its option name (`EMB_TICK_NS`)
+  and the specification or requirement it comes from.
+- **Checks in place:** a priority out of range, a queue item above `EMB_MSGQ_MAX_ITEM`, time slicing with no two
+  threads at one priority, a timer period that is not a whole number of ticks, no debug descriptor.
+- In the Debug stage the same graph comes alive: threads light up as they run, queues fill and drain.
+
 ## 4. A complete debugger
 
 Everything a professional embedded developer expects, plus what only an RTOS-aware tool can show:
@@ -74,6 +96,7 @@ Everything a professional embedded developer expects, plus what only an RTOS-awa
    Widgets-only. Before deciding, build the same small screen both ways and compare.
 2. **Light appearance.** Dark is designed first; a light appearance, as macOS offers, follows the same tokens.
 3. **The other screens:** Start, Code, Debug, Verify.
+4. **Drawing a connection:** dragging from a thread to an object to say who uses it.
 
 ## 6. How the design proceeds
 
@@ -83,4 +106,5 @@ One step at a time, each decision written here before anything is built:
 2. The signature moments: the 3 to 5 interactions people remember.
 3. How you move around: stages, the command palette, the inspector, the keyboard.
 4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere.
-5. The screens, each mocked up and iterated: Configure (first draft done), then Start, Code, Debug, Verify.
+5. The screens, each mocked up and iterated: Configure › Hardware and Configure › RTOS (first drafts done; the
+   layout is liked, the options need widening), then Start, Code, Debug, Verify.
