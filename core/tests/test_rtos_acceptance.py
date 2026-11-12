@@ -22,6 +22,7 @@ generator reads, and each is expected at its line and its path in the YAML.
 import json
 import os
 import shutil
+import sys
 from pathlib import Path
 
 import jsonschema
@@ -105,10 +106,15 @@ def test_errors_are_reported_where_they_are(tmp_path, schemas):
     board_yaml = root / board_rel / "board.yaml"
     text = board_yaml.read_text(encoding="utf-8")
     broken = {
-        "cpu_hz: 180MHz": ("cpu_hz: 900MHz", "clocks.pll"),
         "usart2: { tx: PA2.af7": ("usart2: { tx: PA2.af9", "pins.usart2.tx"),
         "console: { device: usart2": ("console: { device: usart9", "console.device"),
     }
+    # emb-hwgen at the pinned revision formats a Fraction with ':g' while reporting a clock
+    # error (emb_hwgen/clock.py, _mhz), which Python accepts from 3.12 only, so on 3.11 the
+    # generator crashes there, and the core says so (tool_failed). Checked on 3.12 and later
+    # until the RTOS is fixed and the pin raised.
+    if sys.version_info >= (3, 12):
+        broken["cpu_hz: 180MHz"] = ("cpu_hz: 900MHz", "clocks.pll")
     expected = {}
     for good, (bad, _path) in broken.items():
         assert good in text, f"the NUCLEO-F446RE's description changed: no '{good}'"
