@@ -135,8 +135,14 @@ Everything a professional embedded developer expects, plus what only an RTOS-awa
 - variables: locals, a watch list, and live expressions read over SWD while the target runs;
 - core and FPU registers, the ones the last step changed in amber; peripheral registers decoded from the SVD, with
   their fields, writable while halted;
-- a bottom panel: the console (UART, ITM over SWO, GDB), memory as bytes, words or the typed struct, the RTOS timeline
-  from the trace ring, the kernel objects live, and the last crash record decoded, linked back to Configure › RTOS.
+- a bottom panel: the console (UART, ITM over SWO, GDB), the RTOS timeline from the trace ring, the kernel objects
+  live, and the last crash record decoded, linked back to Configure › RTOS;
+- a **memory viewer** as an editor tab, like VS Code's hex editor: go to an address or a symbol, the chip's regions
+  (from the board) and a clickable map of the build's sections and thread stacks, a 16-byte grid as bytes, 16-bit,
+  32-bit or float values with ASCII, symbols coloured in place, changed bytes marked, a data inspector that decodes a
+  pointer to the symbol it points at, writes while halted, and a warning where a read has side effects.
+
+**Code text uses VS Code's metrics on macOS:** a 12 px monospace font on 18 px lines (owner, 2026-11-12).
 
 ## 5. Open questions
 
