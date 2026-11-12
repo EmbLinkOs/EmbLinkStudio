@@ -283,6 +283,20 @@ out, and starts where the cause is.
 Every pin on the chip in Configure › Hardware now carries its name, and clicking a pin or its name opens its row
 in the pin table.
 
+## 4f. Design tokens, languages and Settings
+
+The visual language is written down as tokens in [`tokens.json`](tokens.json) (artboard "Design tokens", built from
+the same file): colour, type, space, radius, size, elevation and motion. The Qt frame reads them; nothing else
+defines a colour, a size, a timing or how text is laid out.
+
+**Three languages (owner, 2026-11-12).** The app ships in three languages, English as the source; the owner names
+the other two. Every visible string comes from a Qt translation file, layouts leave room for text 35% longer than
+English, and labels never get a fixed width. Option keys, register, pin and file names, spec references and code are
+never translated. Numbers and dates follow the chosen language; hex values never do.
+
+**Settings is built directly in Qt (owner, 2026-11-12),** from these tokens, without a mockup. The language is one of
+its first settings, applied without a restart.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
@@ -301,6 +315,6 @@ One step at a time, each decision written here before anything is built:
 1. The feeling (§1): done.
 2. The signature moments: drafted, five (§4e).
 3. How you move around: stages, the command palette, the inspector, the keyboard.
-4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere.
+4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere: drafted (§4f).
 5. The screens, each mocked up and iterated: Configure › Hardware and Configure › RTOS (first drafts done; the
    layout is liked, the options need widening), then Start, Code, Debug, Verify.
