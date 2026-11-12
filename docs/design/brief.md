@@ -191,6 +191,25 @@ server, the serial monitor, the trace timeline, the EmbSIM runner. **Git** is bu
 the DCO sign-off on by default, push, branches, the commit graph, diffs in the editor, change bars and blame. Turning
 an extension off removes its panels and its decorations in the editor.
 
+## 4b. Start
+
+First draft, 2026-11-12 (artboard "Direction B + C · Start"):
+
+- **The welcome window:** the app's mark and version, four actions (new project, open, clone from Git, run an
+  example), the board **connected now** (its probe found on USB) with "new project for this board", recent
+  projects with their board and last build, and the examples EmbLinkRTOS ships.
+- **New project in three steps,** each one shown in a stepper that keeps the choices made:
+  1. **Board:** every board EmbLinkRTOS describes, filtered (connected, hardware, simulated) and searched, each
+     drawn from its package and marked connected, draft (not yet curated), simulated, or not available yet (an
+     ESP32 whose SoC is not described).
+  2. **Template:** empty, blinky, console shell, sensor and logger, SPI device. A template that needs hardware the
+     board does not describe is shown with what is missing ("this board has no LED the RTOS can drive").
+  3. **Details:** name, location, the EmbLinkRTOS release pinned, the profile from the board's defaults, the
+     toolchain found or downloaded, git with a signed-off first commit, build right away.
+- **Creating** shows each step as the core runs it: the manifests, the pinned RTOS, generation, CMake, git, the
+  first build and its sizes. Then: open in Configure or Code, or flash and run.
+- **A cloned project opens untrusted** (specification §9): its files are shown, nothing in it runs until trusted.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
