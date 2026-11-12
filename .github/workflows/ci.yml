@@ -5,7 +5,9 @@
 # Licensed under the Apache License, Version 2.0; see the LICENSE file at the repository root.
 #
 # S0's acceptance (spec section 8): build and test on Windows, Linux and macOS; initialize
-# succeeds; the notices list is generated.
+# succeeds; the notices list is generated. S1's: the core opens the RTOS's nucleo_f446re and
+# pico2_w boards and reports the generator's errors with their locations, against the RTOS
+# checked out at a pinned commit.
 name: CI
 
 on:
@@ -34,7 +36,18 @@ jobs:
       - run: python -m pip install -e "core[dev]"
       - run: ruff check core tools
       - run: ruff format --check core tools
+      - name: EmbLinkRTOS, for stage S1's acceptance tests
+        uses: actions/checkout@v7
+        with:
+          repository: EmbLinkOs/EmbLinkRTOS
+          # The RTOS revision the core is tested against. Raise it with the hw.json and
+          # diagnostics formats the core supports (core/src/emblink_studio_core/rtos.py).
+          ref: a2cb045cf27a0f53bc53ce110d3bffc4d381817f
+          path: rtos
+          persist-credentials: false
       - run: python -m pytest core -q
+        env:
+          EMBLINK_STUDIO_TEST_RTOS: ${{ github.workspace }}/rtos
       - name: Notices list and licence check
         run: python tools/notices.py --components third_party/components.json --pyproject core/pyproject.toml
 

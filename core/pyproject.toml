@@ -16,7 +16,8 @@ description = "EmbLink Studio Core: the engine behind the EmbLink Studio IDE for
 license = "Apache-2.0"
 requires-python = ">=3.11"
 # Runtime dependencies must also be listed in third_party/components.json (tools/notices.py checks).
-dependencies = []
+# PyYAML: the RTOS's generator, which the core runs with its own Python, reads YAML with it.
+dependencies = ["PyYAML>=6.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "jsonschema>=4.21", "ruff>=0.6"]

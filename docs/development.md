@@ -24,6 +24,15 @@ core/.venv/bin/pytest core    # the core's tests, including the protocol schemas
 core/.venv/bin/ruff check . && core/.venv/bin/ruff format --check .
 ```
 
+The core's acceptance tests run against a real EmbLinkRTOS checkout: set `EMBLINK_STUDIO_TEST_RTOS` to it, as
+CI does with the RTOS at a pinned commit; without it they are skipped.
+
+```sh
+EMBLINK_STUDIO_TEST_RTOS=~/EmbLinkRTOS core/.venv/bin/pytest core
+core/.venv/bin/emblink-studio-core board list ~/EmbLinkRTOS          # every method has a command
+core/.venv/bin/emblink-studio-core project validate ~/EmbLinkRTOS/boards/st/nucleo_f446re
+```
+
 Run the application: `build/dev/app/EmbLinkStudio.app/Contents/MacOS/EmbLinkStudio` on macOS,
 `build/dev/app/EmbLinkStudio` elsewhere. It runs the core from `core/src` with the Python CMake found; set
 `EMBLINK_STUDIO_CORE` to an installed `emblink-studio-core` to use that instead.

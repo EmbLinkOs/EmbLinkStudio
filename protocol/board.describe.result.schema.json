@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "board.describe: result",
+  "type": "object",
+  "properties": {
+    "board": {
+      "type": "object"
+    },
+    "soc": {
+      "type": "object"
+    },
+    "devices": {
+      "type": "array"
+    },
+    "profile": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kconfig": {
+      "type": "object"
+    },
+    "generator": {
+      "type": "object"
+    },
+    "inputs": {
+      "type": "array"
+    },
+    "warnings": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "board",
+    "soc",
+    "devices",
+    "kconfig",
+    "generator"
+  ],
+  "additionalProperties": false,
+  "description": "The board and its chip, as hw.json holds them (hw/schemas/hw.schema.json in the RTOS)."
+}

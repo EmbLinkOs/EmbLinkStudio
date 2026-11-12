@@ -9,7 +9,12 @@
 # Created: 2026-11-11
 """The JSON-RPC server behind `emblink-studio-core serve` (spec sections 4 and 5).
 
-Stage S0 implements the lifecycle only: initialize, initialized, shutdown, exit.
+The lifecycle (initialize, initialized, shutdown, exit) and, from stage S1, the
+workspace: project.open, close, status, trust and validate; board.list, describe, pins,
+clocks and memory, answered from the generator's hw.json; generate.run and diff, which
+run the checkout's emb-hwgen. Running the generator needs the checkout trusted first
+(spec section 9); everything else only reads files.
+
 Standard output carries protocol traffic and nothing else; the log goes to standard error.
 Requests before initialize are refused, the exit code is 0 only when exit follows
 shutdown, and a handler that raises is answered with an internal error instead of
@@ -21,22 +26,22 @@ from __future__ import annotations
 import logging
 import sys
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, BinaryIO
 
 from . import __version__, protocol
+from .errors import CoreError
 from .framing import BodyError, FramingError, encode, read_message
+from .rtos import Rtos
+from .trust import TrustStore
+from .workspace import Workspace, list_boards
 
 log = logging.getLogger("emblink_studio_core")
 
 Handler = Callable[[Any], Any]
 
 
-class RpcError(Exception):
-    def __init__(self, code: int, message: str, data: Any = None) -> None:
-        super().__init__(message)
-        self.code = code
-        self.message = message
-        self.data = data
+RpcError = CoreError
 
 
 class Server:
@@ -46,9 +51,23 @@ class Server:
         self._initialized = False
         self._shutdown = False
         self._exit_code: int | None = None
+        self._workspace: Workspace | None = None
+        self._trust = TrustStore()
         self._requests: dict[str, Handler] = {
             "initialize": self._initialize,
             "shutdown": self._shutdown_request,
+            "project.open": self._project_open,
+            "project.close": self._project_close,
+            "project.status": self._project_status,
+            "project.trust": self._project_trust,
+            "project.validate": lambda _p: self._trusted().validate(),
+            "board.list": self._board_list,
+            "board.describe": lambda _p: self._open().model().describe(),
+            "board.pins": lambda _p: self._open().model().pins(),
+            "board.clocks": lambda _p: self._open().model().clocks(),
+            "board.memory": lambda _p: self._open().model().memory(),
+            "generate.run": lambda _p: self._trusted().generate(),
+            "generate.diff": lambda _p: self._trusted().diff(),
         }
         self._notifications: dict[str, Handler] = {
             "initialized": lambda _params: None,
@@ -149,6 +168,63 @@ class Server:
             "protocol_version": protocol.PROTOCOL_VERSION,
             "server": {"name": "emblink-studio-core", "version": __version__},
             "capabilities": {},
+        }
+
+    # -- the workspace (stage S1) --------------------------------------------------------
+
+    def _open(self) -> Workspace:
+        if self._workspace is None:
+            raise RpcError(protocol.NO_PROJECT, "Open a board first (project.open).")
+        return self._workspace
+
+    def _trusted(self) -> Workspace:
+        workspace = self._open()
+        if not self._trust.is_trusted(workspace.rtos.root):
+            raise RpcError(
+                protocol.UNTRUSTED,
+                f"Running the generator runs code from {workspace.rtos.root}. Trust this "
+                "checkout first (project.trust).",
+                {"path": str(workspace.rtos.root)},
+            )
+        return workspace
+
+    def _status(self) -> dict[str, Any]:
+        workspace = self._open()
+        return workspace.status(self._trust.is_trusted(workspace.rtos.root))
+
+    def _project_open(self, params: Any) -> dict[str, Any]:
+        if not isinstance(params, dict) or not isinstance(params.get("path"), str):
+            raise RpcError(protocol.INVALID_PARAMS, "params.path must be a string")
+        self._workspace = Workspace.open(params["path"])
+        log.info("opened %s in %s", self._workspace.id, self._workspace.rtos.root)
+        return self._status()
+
+    def _project_close(self, _params: Any) -> None:
+        self._workspace = None
+        return None
+
+    def _project_status(self, _params: Any) -> dict[str, Any]:
+        return self._status()
+
+    def _project_trust(self, _params: Any) -> dict[str, Any]:
+        workspace = self._open()
+        self._trust.trust(workspace.rtos.root)
+        log.info("trusted %s", workspace.rtos.root)
+        return self._status()
+
+    def _board_list(self, params: Any) -> dict[str, Any]:
+        if isinstance(params, dict) and isinstance(params.get("rtos"), str):
+            rtos = Rtos.find(Path(params["rtos"]).expanduser().resolve())
+            if rtos is None:
+                raise RpcError(
+                    protocol.TOOL_MISSING, f"{params['rtos']} is not an EmbLinkRTOS checkout."
+                )
+        else:
+            rtos = self._open().rtos
+        generator = rtos.check_supported()
+        return {
+            "rtos": {"root": str(rtos.root), "generator": generator},
+            "boards": list_boards(rtos),
         }
 
     def _shutdown_request(self, _params: Any) -> None:
