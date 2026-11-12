@@ -72,6 +72,16 @@ jobs:
       - name: Failed tests, again, with their full output
         if: failure()
         run: ctest --preset dev --rerun-failed --extra-verbose
+      - name: TEMPORARY tst_theme on Windows
+        if: failure() && runner.os == 'Windows'
+        env:
+          QT_QPA_PLATFORM: offscreen
+        working-directory: build/dev/app
+        run: |
+          dumpbin /headers ..\tst_theme.exe | Select-String "subsystem"
+          $p = Start-Process -FilePath ..\tst_theme.exe -ArgumentList '-o','out.txt,txt','-v1' -Wait -PassThru -NoNewWindow
+          echo "exit code: $($p.ExitCode)"
+          if (Test-Path out.txt) { Get-Content out.txt } else { echo "no out.txt" }
 
   format:
     name: clang-format
