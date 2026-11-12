@@ -98,6 +98,35 @@ Everything a professional embedded developer expects, plus what only an RTOS-awa
 | RTOS | Threads and their states, objects, stacks and high-water marks, the timeline |
 | Trouble | Fault analyzer, crash-record decoding, SWO/ITM console and trace |
 
+## 4g. How you move around
+
+Artboard "How you move around", 2026-11-12.
+
+**The command palette (⌘K, from anywhere).** One field reaches every screen, pin, peripheral, thread and object,
+kernel setting, command, file and symbol. The title bar of every screen gains a search field that opens it.
+
+- Each result says where it lives and shows its shortcut, so the palette teaches the keys. ↑ ↓ move, ↵ opens,
+  ⇥ narrows the scope (hardware, RTOS, settings, commands, code), and a leading `>` searches commands only, as in
+  VS Code.
+- Opening a result goes there and selects it, so the inspector shows it at once. With nothing typed, the palette
+  shows what you opened recently and a few suggestions.
+- A preview beside the results shows the thing itself. A kernel switch changes in the preview; the change waits in
+  the system.yaml diff, like any other, until Apply.
+- Search reads every language, the option keys and pin names: "noyau" finds Kernel in an English interface,
+  "引脚" finds the pins, and the result says which language matched. A match in the visible title ranks first.
+
+**Shortcuts.** Editing keeps VS Code's keys; building, running and testing keep Xcode's: ⌘B builds, ⌘R builds and
+flashes, ⌘U runs the suite. Where the two disagree, the domain decides (⌘. is quick fix, as in VS Code; stopping is
+⇧⌘.). ⌘1 to ⌘4 are the four stages, ⌥1 to ⌥3 the Configure tabs; ⌘0 and ⌥⌘0 show or hide the left panel and the
+inspector, ⌘J the bottom panel; ⌃- and ⌃⇧- go back and forward. Debug keeps VS Code's F-keys. On Windows and Linux,
+Ctrl takes the place of ⌘ and Alt of ⌥. Every command has a menu item and a palette entry, and every binding can be
+changed in Settings.
+
+**The inspector follows the selection.** There is one selection in the whole app, and switching stage keeps it. Each
+stage shows what it knows about it: Configure its settings, Code its definition and uses, Debug its live state,
+Verify its tests and evidence. The inspector can be pinned to keep one subject while you select others; ⌃- and ⌃⇧-
+walk the selection history; with nothing selected it shows the project.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
@@ -113,7 +142,7 @@ One step at a time, each decision written here before anything is built:
 
 1. The feeling (§1): done.
 2. The signature moments: the 3 to 5 interactions people remember.
-3. How you move around: stages, the command palette, the inspector, the keyboard.
+3. How you move around: stages, the command palette, the inspector, the keyboard: drafted (§4g).
 4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere.
 5. The screens, each mocked up and iterated: Configure › Hardware and Configure › RTOS (first drafts done; the
    layout is liked, the options need widening), then Start, Code, Debug, Verify.
