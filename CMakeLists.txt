@@ -17,7 +17,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(EMBLINK_STUDIO_BUILD_TESTS "Build the Qt tests" ON)
 
 # Qt 6.8 LTS is the release target (spec section 9); newer 6.x builds for development.
-find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets LinguistTools)
 qt_standard_project_setup()
 
 # The Python that runs the core during development (spec section 11, question 4).

@@ -116,16 +116,48 @@ QStringList Workbench::namedLayouts() const
     return m_manager->perspectiveNames();
 }
 
+void Workbench::setStage(const QString &stage)
+{
+    if (stage == m_stage)
+        return;
+    if (!m_stage.isEmpty())
+        m_stageLayouts.insert(m_stage, saveLayout());
+    m_stage = stage;
+    const auto saved = m_stageLayouts.constFind(stage);
+    if (saved != m_stageLayouts.cend())
+        restoreLayout(saved.value());
+    emit stageChanged(stage);
+}
+
 void Workbench::save(QSettings &settings) const
 {
     settings.setValue(QStringLiteral("current"), saveLayout());
     m_manager->savePerspectives(settings);
+    settings.setValue(QStringLiteral("stage"), m_stage);
+    settings.beginGroup(QStringLiteral("stages"));
+    settings.remove(QString());
+    for (auto it = m_stageLayouts.cbegin(); it != m_stageLayouts.cend(); ++it)
+        if (it.key() != m_stage)
+            settings.setValue(it.key(), it.value());
+    if (!m_stage.isEmpty())
+        settings.setValue(m_stage, saveLayout());
+    settings.endGroup();
 }
 
 void Workbench::restore(QSettings &settings)
 {
     m_manager->loadPerspectives(settings);
     restoreLayout(settings.value(QStringLiteral("current")).toByteArray());
+    settings.beginGroup(QStringLiteral("stages"));
+    m_stageLayouts.clear();
+    for (const QString &key : settings.childKeys())
+        m_stageLayouts.insert(key, settings.value(key).toByteArray());
+    settings.endGroup();
+    const QString stage = settings.value(QStringLiteral("stage")).toString();
+    if (!stage.isEmpty() && stage != m_stage) {
+        m_stage = stage;
+        emit stageChanged(stage);
+    }
     emit namedLayoutsChanged();
 }
 

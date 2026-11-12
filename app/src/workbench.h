@@ -17,6 +17,10 @@
  * saves and restores the current layout, and keeps layouts saved by name. It knows
  * nothing about what the views show, so it is tested on its own.
  *
+ * Each stage (Configure, Code, Debug, Verify) keeps its own layout: switching stage
+ * keeps the layout of the stage left and brings back the one of the stage entered,
+ * or keeps the current one the first time a stage is entered (design brief 4d, 4g).
+ *
  * @see     Spec sections 7 and 11; mainwindow.h
  * @author  Junior Deogracias
  * @date    2026-11-11 (created)
@@ -26,6 +30,7 @@
 
 #include <DockManager.h>
 #include <DockWidget.h>
+#include <QHash>
 #include <QList>
 #include <QObject>
 #include <QStringList>
@@ -62,7 +67,15 @@ class Workbench : public QObject
     void removeNamedLayout(const QString &name);
     QStringList namedLayouts() const;
 
-    // The current layout and every named layout, under `settings`' current group.
+    // Switches to `stage`, keeping each stage's layout. `stage` names it in saved settings.
+    void setStage(const QString &stage);
+    QString stage() const
+    {
+        return m_stage;
+    }
+
+    // The current layout, the current stage and each stage's layout, and every named layout,
+    // under `settings`' current group.
     void save(QSettings &settings) const;
     void restore(QSettings &settings);
 
@@ -80,11 +93,14 @@ class Workbench : public QObject
 
   signals:
     void namedLayoutsChanged();
+    void stageChanged(const QString &stage);
 
   private:
     ads::CDockManager *m_manager = nullptr;
     QList<ads::CDockWidget *> m_views;
     QByteArray m_default;
+    QString m_stage;
+    QHash<QString, QByteArray> m_stageLayouts;
 };
 
 } // namespace emblinkstudio

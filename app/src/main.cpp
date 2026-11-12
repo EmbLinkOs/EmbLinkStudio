@@ -10,17 +10,28 @@
  *
  * @details
  * Sets the application name, organization and version (EMBLINK_STUDIO_VERSION,
- * defined by CMake from the project version), then shows MainWindow, which starts
- * EmbLink Studio Core.
+ * defined by CMake from the project version), applies the interface language, then
+ * installs the theme from the built-in design tokens and shows MainWindow, which
+ * starts EmbLink Studio Core. The language comes first, so the theme's fonts follow
+ * its rules (no Chinese text below 12 px).
  *
- * @see     mainwindow.h
+ * Options, for development and for the pictures in progress-screenshots/:
+ *   --language <en|fr|zh_CN>  use this language for this run, without saving it
+ *   --stage <configure|code|debug|verify>  open on this stage
+ *   --screenshot <file>       save a picture of the window to <file>, then quit
+ *
+ * @see     mainwindow.h, theme.h, language.h
  * @author  Junior Deogracias
  * @date    2026-11-11 (created)
  */
 
+#include "language.h"
 #include "mainwindow.h"
+#include "theme.h"
 
 #include <QApplication>
+#include <QCommandLineParser>
+#include <QTimer>
 
 int main(int argc, char *argv[])
 {
@@ -29,7 +40,50 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(QStringLiteral("EmbLink"));
     QApplication::setApplicationVersion(QStringLiteral(EMBLINK_STUDIO_VERSION));
 
-    emblinkstudio::MainWindow window;
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+    const QCommandLineOption languageOption(
+        QStringLiteral("language"), QStringLiteral("Use <code> for this run: en, fr or zh_CN."),
+        QStringLiteral("code"));
+    const QCommandLineOption stageOption(
+        QStringLiteral("stage"), QStringLiteral("Open on <stage>: configure, code, debug, verify."),
+        QStringLiteral("stage"));
+    const QCommandLineOption screenshotOption(
+        QStringLiteral("screenshot"),
+        QStringLiteral("Save a picture of the window to <file>, then quit."),
+        QStringLiteral("file"));
+    parser.addOptions({languageOption, stageOption, screenshotOption});
+    parser.process(app);
+
+    emblinkstudio::Language language(&app);
+    language.restore();
+    if (parser.isSet(languageOption) && !language.set(parser.value(languageOption)))
+        qWarning("Unknown language %s", qPrintable(parser.value(languageOption)));
+
+    emblinkstudio::Theme theme;
+    QString error;
+    if (!theme.load(emblinkstudio::Theme::defaultPath(), &error))
+        qFatal("The design tokens are missing: %s", qPrintable(error));
+    emblinkstudio::Theme::install(theme, app);
+    // A Chinese interface sets no text below 12 px: the fonts follow the language.
+    QObject::connect(&language, &emblinkstudio::Language::changed, &app, [&app] {
+        app.setFont(emblinkstudio::Theme::current().font(QStringLiteral("body")));
+    });
+
+    emblinkstudio::MainWindow window(&language);
+    if (parser.isSet(stageOption))
+        window.setStage(parser.value(stageOption));
     window.show();
+
+    if (parser.isSet(screenshotOption)) {
+        const QString file = parser.value(screenshotOption);
+        // Long enough for the core to answer and the stage switch to settle.
+        QTimer::singleShot(1500, &window, [&window, &app, file] {
+            if (!window.grab().save(file))
+                qWarning("Cannot save %s", qPrintable(file));
+            app.exit(0);
+        });
+    }
     return app.exec();
 }

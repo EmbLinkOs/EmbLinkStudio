@@ -12,7 +12,8 @@
  * Checks the layout rule of spec section 7: every view can be moved, floated and closed;
  * a layout saved is the layout restored, in a new window as after a restart; named
  * layouts survive a restart through QSettings; Reset brings back the default; and a
- * layout from another version is refused rather than half applied.
+ * layout from another version is refused rather than half applied; and each stage keeps
+ * its own layout, across a restart too.
  *
  * @see     workbench.h
  * @author  Junior Deogracias
@@ -25,6 +26,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QSettings>
+#include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTest>
 #include <memory>
@@ -173,6 +175,49 @@ class TestWorkbench : public QObject
         QVERIFY(!second.workbench->restoreLayout(state));
         QVERIFY(second.consoleTabbedWithLog());
         QVERIFY(!second.workbench->restoreLayout(QByteArray()));
+    }
+
+    void eachStageKeepsItsLayout()
+    {
+        Window w;
+        QSignalSpy changed(w.workbench, &Workbench::stageChanged);
+        w.workbench->setStage(QStringLiteral("configure"));
+        w.moveConsoleRight();
+        // A stage entered for the first time keeps the layout on screen.
+        w.workbench->setStage(QStringLiteral("code"));
+        QVERIFY(!w.consoleTabbedWithLog());
+        w.workbench->resetLayout();
+        QVERIFY(w.consoleTabbedWithLog());
+        w.workbench->setStage(QStringLiteral("configure"));
+        QVERIFY(!w.consoleTabbedWithLog());
+        w.workbench->setStage(QStringLiteral("code"));
+        QVERIFY(w.consoleTabbedWithLog());
+        w.workbench->setStage(QStringLiteral("code")); // no change, no signal
+        QCOMPARE(changed.count(), 4);
+        QCOMPARE(w.workbench->stage(), QStringLiteral("code"));
+    }
+
+    void stageLayoutsSurviveARestart()
+    {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString ini = dir.filePath(QStringLiteral("layout.ini"));
+        {
+            Window first;
+            first.workbench->setStage(QStringLiteral("configure"));
+            first.moveConsoleRight();
+            first.workbench->setStage(QStringLiteral("code"));
+            first.workbench->resetLayout();
+            QSettings settings(ini, QSettings::IniFormat);
+            first.workbench->save(settings);
+        }
+        Window second;
+        QSettings settings(ini, QSettings::IniFormat);
+        second.workbench->restore(settings);
+        QCOMPARE(second.workbench->stage(), QStringLiteral("code"));
+        QVERIFY(second.consoleTabbedWithLog());
+        second.workbench->setStage(QStringLiteral("configure"));
+        QVERIFY(!second.consoleTabbedWithLog());
     }
 };
 
