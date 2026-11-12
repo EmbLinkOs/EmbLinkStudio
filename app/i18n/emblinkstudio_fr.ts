@@ -125,6 +125,73 @@
     </message>
 </context>
 <context>
+    <name>emblinkstudio::ClockTreeView</name>
+    <message>
+        <source>Open a generated board to see its clock tree.</source>
+        <translation>Ouvrez une carte générée pour voir son arbre d’horloges.</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Source</translation>
+    </message>
+    <message>
+        <source>bypass</source>
+        <translation>bypass</translation>
+    </message>
+    <message>
+        <source>PLL input</source>
+        <translation>Entrée de la PLL</translation>
+    </message>
+    <message>
+        <source>VCO</source>
+        <translation>VCO</translation>
+    </message>
+    <message>
+        <source>PLL Q output</source>
+        <translation>Sortie Q de la PLL</translation>
+    </message>
+    <message>
+        <source>System clock</source>
+        <translation>Horloge système</translation>
+    </message>
+    <message>
+        <source>CPU and AHB</source>
+        <translation>CPU et AHB</translation>
+    </message>
+    <message>
+        <source>CPU · AHB %1</source>
+        <translation>CPU · AHB %1</translation>
+    </message>
+    <message>
+        <source>Bus %1</source>
+        <translation>Bus %1</translation>
+    </message>
+    <message>
+        <source>limit %1</source>
+        <translation>limite %1</translation>
+    </message>
+    <message>
+        <source>Flash wait states: %1.</source>
+        <translation>États d’attente de la flash : %1.</translation>
+    </message>
+    <message>
+        <source>Regulator: %1 (VOS %2), over-drive %3.</source>
+        <translation>Régulateur : %1 (VOS %2), over-drive %3.</translation>
+    </message>
+    <message>
+        <source>on</source>
+        <translation>activé</translation>
+    </message>
+    <message>
+        <source>off</source>
+        <translation>désactivé</translation>
+    </message>
+    <message>
+        <source>Kernel tick timer: %1 at %2.</source>
+        <translation>Timer du tick du noyau : %1 à %2.</translation>
+    </message>
+</context>
+<context>
     <name>emblinkstudio::CoreClient</name>
     <message>
         <source>Could not start EmbLink Studio Core (%1): %2</source>
@@ -161,6 +228,41 @@
     <message>
         <source>EmbLink Studio Core exited (code %1) before it initialized.</source>
         <translation>EmbLink Studio Core s’est arrêté (code %1) avant son initialisation.</translation>
+    </message>
+</context>
+<context>
+    <name>emblinkstudio::DevicesView</name>
+    <message>
+        <source>Device</source>
+        <translation>Dispositif</translation>
+    </message>
+    <message>
+        <source>Class</source>
+        <translation>Classe</translation>
+    </message>
+    <message>
+        <source>Compatible</source>
+        <translation>Compatible</translation>
+    </message>
+    <message>
+        <source>Level</source>
+        <translation>Niveau</translation>
+    </message>
+    <message>
+        <source>Depends on</source>
+        <translation>Dépend de</translation>
+    </message>
+    <message>
+        <source>Field</source>
+        <translation>Champ</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>Valeur</translation>
+    </message>
+    <message>
+        <source>Open a generated board to see its devices.</source>
+        <translation>Ouvrez une carte générée pour voir ses dispositifs.</translation>
     </message>
 </context>
 <context>
@@ -212,6 +314,18 @@
     <message>
         <source>Board</source>
         <translation>Carte</translation>
+    </message>
+    <message>
+        <source>Clock tree</source>
+        <translation>Arbre d’horloges</translation>
+    </message>
+    <message>
+        <source>Memory</source>
+        <translation>Mémoire</translation>
+    </message>
+    <message>
+        <source>Devices</source>
+        <translation>Dispositifs</translation>
     </message>
     <message>
         <source>Problems</source>
@@ -348,6 +462,37 @@
     <message>
         <source>Name of this layout, such as Debug:</source>
         <translation>Nom de cette disposition, par exemple Débogage :</translation>
+    </message>
+</context>
+<context>
+    <name>emblinkstudio::MemoryView</name>
+    <message>
+        <source>Open a generated board to see its memory.</source>
+        <translation>Ouvrez une carte générée pour voir sa mémoire.</translation>
+    </message>
+    <message>
+        <source>Memory map</source>
+        <translation>Carte mémoire</translation>
+    </message>
+    <message>
+        <source>sectors %1</source>
+        <translation>secteurs %1</translation>
+    </message>
+    <message>
+        <source>pages %1 to %2</source>
+        <translation>pages %1 à %2</translation>
+    </message>
+    <message>
+        <source>%1 (reserved)</source>
+        <translation>%1 (réservée)</translation>
+    </message>
+    <message>
+        <source>Flash partitions</source>
+        <translation>Partitions de la flash</translation>
+    </message>
+    <message>
+        <source>Image layout</source>
+        <translation>Disposition de l’image</translation>
     </message>
 </context>
 <context>

@@ -19,6 +19,7 @@
  *   --language <en|fr|zh_CN>  use this language for this run, without saving it
  *   --stage <configure|code|debug|verify>  open on this stage
  *   --open <board>            open this board of an EmbLinkRTOS checkout
+ *   --view <id>               bring a view to the front: board, clocks, memory, devices
  *   --screenshot <file>       save a picture of the window to <file>, then quit
  *
  * @see     mainwindow.h, theme.h, language.h
@@ -58,7 +59,11 @@ int main(int argc, char *argv[])
         QStringLiteral("open"),
         QStringLiteral("Open <board>, a board directory of an EmbLinkRTOS checkout."),
         QStringLiteral("board"));
-    parser.addOptions({languageOption, stageOption, openOption, screenshotOption});
+    const QCommandLineOption viewOption(
+        QStringLiteral("view"),
+        QStringLiteral("Bring the view <id> to the front: board, clocks, memory, devices."),
+        QStringLiteral("id"));
+    parser.addOptions({languageOption, stageOption, openOption, viewOption, screenshotOption});
     parser.process(app);
 
     emblinkstudio::Language language(&app);
@@ -81,6 +86,8 @@ int main(int argc, char *argv[])
         window.setStage(parser.value(stageOption));
     if (parser.isSet(openOption))
         window.openBoard(parser.value(openOption));
+    if (parser.isSet(viewOption))
+        window.showView(parser.value(viewOption));
     window.show();
 
     if (parser.isSet(screenshotOption)) {

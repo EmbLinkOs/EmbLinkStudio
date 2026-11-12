@@ -315,9 +315,11 @@ QString Theme::styleSheet() const
     s += QStringLiteral("QTreeWidget#problems { background: transparent; border: 0; }\n"
                         "QTreeWidget#problems::item { padding: 4px 2px; border-radius: 6px; }\n"
                         "QTreeWidget#problems::item:selected { background: %1; color: %2; }\n"
+                        "QTreeWidget#problems QHeaderView { background: transparent; border: 0; "
+                        "border-bottom: 1px solid %4; }\n"
                         "QTreeWidget#problems QHeaderView::section { background: transparent; "
-                        "color: %3; border: 0; padding: 2px 4px; }\n")
-             .arg(c("fill.selected"), c("text.strong"), c("text.quiet"));
+                        "color: %3; border: 0; padding: 3px 6px; }\n")
+             .arg(c("fill.selected"), c("text.strong"), c("text.quiet"), c("line.hairline"));
     s += QStringLiteral("QMenu { background: %1; border: 1px solid %2; border-radius: %3px; "
                         "padding: 6px; }\n"
                         "QMenu::item { padding: 5px 14px; border-radius: 6px; }\n"

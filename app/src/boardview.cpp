@@ -51,35 +51,7 @@ QString text(const QJsonValue &v)
     return dash();
 }
 
-QString hex(double value)
-{
-    return QStringLiteral("0x%1")
-        .arg(qulonglong(value), 8, 16, QLatin1Char('0'))
-        .toUpper()
-        .replace(QStringLiteral("0X"), QStringLiteral("0x"));
-}
-
 } // namespace
-
-QString formatHz(double hz)
-{
-    const QLocale locale;
-    if (hz >= 1e6)
-        return locale.toString(hz / 1e6, 'g', 6) + QStringLiteral(" MHz");
-    if (hz >= 1e3)
-        return locale.toString(hz / 1e3, 'g', 6) + QStringLiteral(" kHz");
-    return locale.toString(hz, 'g', 6) + QStringLiteral(" Hz");
-}
-
-QString formatBytes(double bytes)
-{
-    const QLocale locale;
-    if (bytes >= 1024.0 * 1024.0)
-        return locale.toString(bytes / (1024.0 * 1024.0), 'g', 4) + QStringLiteral(" MB");
-    if (bytes >= 1024.0)
-        return locale.toString(bytes / 1024.0, 'g', 4) + QStringLiteral(" KB");
-    return locale.toString(bytes, 'g', 6) + QStringLiteral(" B");
-}
 
 BoardView::BoardView(QWidget *parent) : QScrollArea(parent)
 {
@@ -234,7 +206,7 @@ void BoardView::render()
             {tr("Console"),
              tr("%1 at %2 baud")
                  .arg(console.value(QStringLiteral("device")).toString(),
-                      QLocale().toString(console.value(QStringLiteral("baud")).toInt()))});
+                      QString::number(console.value(QStringLiteral("baud")).toInt()))});
     for (const QJsonValue &led : board.value(QStringLiteral("leds")).toArray())
         boardRows.append({tr("LED %1").arg(led.toObject().value(QStringLiteral("name")).toString()),
                           led.toObject().value(QStringLiteral("gpio")).toString()});
@@ -246,7 +218,7 @@ void BoardView::render()
     if (!probe.isEmpty()) {
         QStringList ways;
         for (auto it = probe.begin(); it != probe.end(); ++it)
-            ways.append(it.key() + QStringLiteral(" ") + text(it.value()));
+            ways.append(it.key() + QStringLiteral(" ") + formatField(it.key(), it.value()));
         boardRows.append({tr("Debug probe"), ways.join(QStringLiteral("\n"))});
     }
     addGroup(tr("Board"), boardRows);
@@ -277,24 +249,33 @@ void BoardView::render()
         memoryRows.append({region.value(QStringLiteral("name")).toString(),
                            tr("%1 at %2")
                                .arg(formatBytes(region.value(QStringLiteral("size")).toDouble()),
-                                    hex(region.value(QStringLiteral("base")).toDouble()))});
+                                    formatHex(region.value(QStringLiteral("base")).toDouble()))});
     }
     for (const QJsonValue &v : m_memory.value(QStringLiteral("partitions")).toArray()) {
         const QJsonObject part = v.toObject();
         memoryRows.append({tr("Partition %1").arg(part.value(QStringLiteral("name")).toString()),
                            tr("%1 at %2")
                                .arg(formatBytes(part.value(QStringLiteral("size")).toDouble()),
-                                    hex(part.value(QStringLiteral("base")).toDouble()))});
+                                    formatHex(part.value(QStringLiteral("base")).toDouble()))});
     }
     addGroup(tr("Memory"), memoryRows);
 
     QList<QPair<QString, QString>> pinRows;
     for (const QJsonValue &v : m_pins.value(QStringLiteral("assigned")).toArray()) {
         const QJsonObject pin = v.toObject();
+        // The mode as the generator writes it (board.md): af7 (usart2_tx), fixed (...), output.
+        const QString mode = pin.value(QStringLiteral("mode")).toString();
         const QString signal = pin.value(QStringLiteral("signal")).toString();
-        pinRows.append({pin.value(QStringLiteral("pin")).toString(),
-                        (signal.isEmpty() ? pin.value(QStringLiteral("mode")).toString() : signal) +
-                            QStringLiteral(" · ") + pin.value(QStringLiteral("owner")).toString()});
+        QString how = mode;
+        if (mode == QStringLiteral("af"))
+            how = QStringLiteral("af%1 (%2)")
+                      .arg(pin.value(QStringLiteral("af")).toInt())
+                      .arg(signal);
+        else if (mode == QStringLiteral("fixed"))
+            how = QStringLiteral("fixed (%1)").arg(signal);
+        pinRows.append(
+            {pin.value(QStringLiteral("pin")).toString(),
+             how + QStringLiteral(" · ") + pin.value(QStringLiteral("owner")).toString()});
     }
     addGroup(tr("Pins in use"), pinRows);
 

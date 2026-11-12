@@ -15,7 +15,8 @@
  * (Ctrl elsewhere); and below it the Workbench, where every view is a card. Each stage
  * keeps its own layout.
  *
- * The views so far: Board, the open board's model; Problems, the generator's
+ * The views so far: Board, the open board's model; Clock tree, Memory and Devices,
+ * drawn from the generator's model (stage S2); Problems, the generator's
  * diagnostics, each linked to its file; Core, whether EmbLink Studio Core is connected,
  * with a restart when it fails or stops; and the core's log. The window owns the
  * CoreClient and the Session (the open board) for the life of the application. Open
@@ -50,7 +51,10 @@ namespace emblinkstudio
 {
 
 class BoardView;
+class ClockTreeView;
+class DevicesView;
 class Language;
+class MemoryView;
 class ProblemsView;
 class SegmentedControl;
 class Session;
@@ -69,6 +73,8 @@ class MainWindow : public QMainWindow
     QString stage() const;
     // Opens a board directory of an EmbLinkRTOS checkout, once the core is ready.
     void openBoard(const QString &path);
+    // Brings the view with this id to the front: "board", "clocks", "memory", "devices", ...
+    void showView(const QString &id);
     Session *session() const
     {
         return m_session;
@@ -131,6 +137,9 @@ class MainWindow : public QMainWindow
     QPlainTextEdit *m_log = nullptr;
     Session *m_session = nullptr;
     BoardView *m_boardView = nullptr;
+    ClockTreeView *m_clockView = nullptr;
+    MemoryView *m_memoryView = nullptr;
+    DevicesView *m_devicesView = nullptr;
     ProblemsView *m_problems = nullptr;
     QString m_pendingOpen;
     std::function<QString()> m_statusText;

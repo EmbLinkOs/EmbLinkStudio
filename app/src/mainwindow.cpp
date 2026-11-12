@@ -28,8 +28,11 @@
  */
 
 #include "boardview.h"
+#include "clocktreeview.h"
+#include "devicesview.h"
 #include "language.h"
 #include "mainwindow.h"
+#include "memoryview.h"
 #include "problemsview.h"
 #include "segmentedcontrol.h"
 #include "session.h"
@@ -114,11 +117,21 @@ MainWindow::MainWindow(Language *language, QWidget *parent)
 
     m_session = new Session(&m_core, this);
     m_boardView = new BoardView;
+    m_clockView = new ClockTreeView;
+    m_memoryView = new MemoryView;
+    m_devicesView = new DevicesView;
     m_problems = new ProblemsView;
 
     // The ids name the views in saved layouts: keep them stable.
-    m_workbench->addView(QStringLiteral("board"), QString(), m_boardView,
-                         ads::CenterDockWidgetArea);
+    ads::CDockWidget *board = m_workbench->addView(QStringLiteral("board"), QString(), m_boardView,
+                                                   ads::CenterDockWidgetArea);
+    m_workbench->addView(QStringLiteral("clocks"), QString(), m_clockView,
+                         ads::CenterDockWidgetArea, board);
+    m_workbench->addView(QStringLiteral("memory"), QString(), m_memoryView,
+                         ads::CenterDockWidgetArea, board);
+    m_workbench->addView(QStringLiteral("devices"), QString(), m_devicesView,
+                         ads::CenterDockWidgetArea, board);
+    board->setAsCurrentTab();
     ads::CDockWidget *problems = m_workbench->addView(QStringLiteral("problems"), QString(),
                                                       m_problems, ads::BottomDockWidgetArea);
     m_workbench->addView(QStringLiteral("coreLog"), QString(), m_log, ads::BottomDockWidgetArea,
@@ -126,6 +139,8 @@ MainWindow::MainWindow(Language *language, QWidget *parent)
     m_workbench->addView(QStringLiteral("core"), QString(), coreView, ads::BottomDockWidgetArea,
                          problems);
     problems->setAsCurrentTab();
+    // The board's views take most of the height; the panel below, a third of it at most.
+    m_workbench->manager()->setSplitterSizes(board->dockAreaWidget(), {560, 220});
     m_workbench->captureDefaultLayout();
 
     buildStageBar();
@@ -298,9 +313,12 @@ void MainWindow::retranslate()
 
     const QList<ads::CDockWidget *> views = m_workbench->views();
     views.at(0)->setWindowTitle(tr("Board"));
-    views.at(1)->setWindowTitle(tr("Problems"));
-    views.at(2)->setWindowTitle(tr("Core log"));
-    views.at(3)->setWindowTitle(tr("Core"));
+    views.at(1)->setWindowTitle(tr("Clock tree"));
+    views.at(2)->setWindowTitle(tr("Memory"));
+    views.at(3)->setWindowTitle(tr("Devices"));
+    views.at(4)->setWindowTitle(tr("Problems"));
+    views.at(5)->setWindowTitle(tr("Core log"));
+    views.at(6)->setWindowTitle(tr("Core"));
     for (ads::CDockWidget *v : views)
         v->toggleViewAction()->setText(v->windowTitle());
     m_restart->setText(tr("&Restart the core"));
@@ -352,6 +370,15 @@ void MainWindow::openBoard(const QString &path)
         m_session->open(path);
     else
         m_pendingOpen = path;
+}
+
+void MainWindow::showView(const QString &id)
+{
+    for (ads::CDockWidget *view : m_workbench->views())
+        if (view->objectName() == id) {
+            view->toggleView(true);
+            view->setAsCurrentTab();
+        }
 }
 
 void MainWindow::chooseBoard()
@@ -413,6 +440,9 @@ void MainWindow::showModel()
 {
     m_boardView->setModel(m_session->status(), m_session->describe(), m_session->clocks(),
                           m_session->memory(), m_session->pins());
+    m_clockView->setClocks(m_session->clocks());
+    m_memoryView->setMemory(m_session->memory());
+    m_devicesView->setDevices(m_session->describe().value(QStringLiteral("devices")).toArray());
 }
 
 void MainWindow::startCore()

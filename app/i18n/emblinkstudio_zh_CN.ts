@@ -125,6 +125,73 @@
     </message>
 </context>
 <context>
+    <name>emblinkstudio::ClockTreeView</name>
+    <message>
+        <source>Open a generated board to see its clock tree.</source>
+        <translation>打开已生成的开发板以查看其时钟树。</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>时钟源</translation>
+    </message>
+    <message>
+        <source>bypass</source>
+        <translation>旁路</translation>
+    </message>
+    <message>
+        <source>PLL input</source>
+        <translation>PLL 输入</translation>
+    </message>
+    <message>
+        <source>VCO</source>
+        <translation>VCO</translation>
+    </message>
+    <message>
+        <source>PLL Q output</source>
+        <translation>PLL Q 输出</translation>
+    </message>
+    <message>
+        <source>System clock</source>
+        <translation>系统时钟</translation>
+    </message>
+    <message>
+        <source>CPU and AHB</source>
+        <translation>CPU 和 AHB</translation>
+    </message>
+    <message>
+        <source>CPU · AHB %1</source>
+        <translation>CPU · AHB %1</translation>
+    </message>
+    <message>
+        <source>Bus %1</source>
+        <translation>总线 %1</translation>
+    </message>
+    <message>
+        <source>limit %1</source>
+        <translation>上限 %1</translation>
+    </message>
+    <message>
+        <source>Flash wait states: %1.</source>
+        <translation>闪存等待周期：%1。</translation>
+    </message>
+    <message>
+        <source>Regulator: %1 (VOS %2), over-drive %3.</source>
+        <translation>稳压器：%1（VOS %2），超频驱动%3。</translation>
+    </message>
+    <message>
+        <source>on</source>
+        <translation>开启</translation>
+    </message>
+    <message>
+        <source>off</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Kernel tick timer: %1 at %2.</source>
+        <translation>内核节拍定时器：%1，%2。</translation>
+    </message>
+</context>
+<context>
     <name>emblinkstudio::CoreClient</name>
     <message>
         <source>Could not start EmbLink Studio Core (%1): %2</source>
@@ -161,6 +228,41 @@
     <message>
         <source>EmbLink Studio Core exited (code %1) before it initialized.</source>
         <translation>EmbLink Studio Core 在初始化之前退出（代码 %1）。</translation>
+    </message>
+</context>
+<context>
+    <name>emblinkstudio::DevicesView</name>
+    <message>
+        <source>Device</source>
+        <translation>设备</translation>
+    </message>
+    <message>
+        <source>Class</source>
+        <translation>类别</translation>
+    </message>
+    <message>
+        <source>Compatible</source>
+        <translation>兼容</translation>
+    </message>
+    <message>
+        <source>Level</source>
+        <translation>级别</translation>
+    </message>
+    <message>
+        <source>Depends on</source>
+        <translation>依赖</translation>
+    </message>
+    <message>
+        <source>Field</source>
+        <translation>字段</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>值</translation>
+    </message>
+    <message>
+        <source>Open a generated board to see its devices.</source>
+        <translation>打开已生成的开发板以查看其设备。</translation>
     </message>
 </context>
 <context>
@@ -212,6 +314,18 @@
     <message>
         <source>Board</source>
         <translation>开发板</translation>
+    </message>
+    <message>
+        <source>Clock tree</source>
+        <translation>时钟树</translation>
+    </message>
+    <message>
+        <source>Memory</source>
+        <translation>内存</translation>
+    </message>
+    <message>
+        <source>Devices</source>
+        <translation>设备</translation>
     </message>
     <message>
         <source>Problems</source>
@@ -348,6 +462,37 @@
     <message>
         <source>Name of this layout, such as Debug:</source>
         <translation>此布局的名称，例如“调试”：</translation>
+    </message>
+</context>
+<context>
+    <name>emblinkstudio::MemoryView</name>
+    <message>
+        <source>Open a generated board to see its memory.</source>
+        <translation>打开已生成的开发板以查看其内存。</translation>
+    </message>
+    <message>
+        <source>Memory map</source>
+        <translation>内存映射</translation>
+    </message>
+    <message>
+        <source>sectors %1</source>
+        <translation>扇区 %1</translation>
+    </message>
+    <message>
+        <source>pages %1 to %2</source>
+        <translation>页 %1 到 %2</translation>
+    </message>
+    <message>
+        <source>%1 (reserved)</source>
+        <translation>%1（保留）</translation>
+    </message>
+    <message>
+        <source>Flash partitions</source>
+        <translation>闪存分区</translation>
+    </message>
+    <message>
+        <source>Image layout</source>
+        <translation>镜像布局</translation>
     </message>
 </context>
 <context>
