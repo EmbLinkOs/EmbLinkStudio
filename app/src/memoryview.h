@@ -6,8 +6,7 @@
 
 /**
  * @file    memoryview.h
- * @brief   MemoryView: the chip's memory, the flash partitions and the image layout (spec section
- * 7).
+ * @brief   MemoryView: the chip's memory, its flash partitions and the image layout.
  *
  * @details
  * Three groups, from board.memory: the chip's regions (name, base address, size and
@@ -15,7 +14,7 @@
  * each with its erase units (sectors, or a range of pages); and the image layout the
  * linker uses (FLASH and RAM, with the regions RAM spans). Every value is the
  * generator's, written as board.md and build_report.md write it. rows() gives each
- * group's rows, for the golden tests of stage S2.
+ * group's rows, for the golden tests of stage S2. The Memory view of spec section 7.
  *
  * @see     format.h; board.md's "Memory map" and "Flash partitions", build_report.md's
  *          "Image layout"
