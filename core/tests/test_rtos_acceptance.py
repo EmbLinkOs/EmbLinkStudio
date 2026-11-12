@@ -27,10 +27,19 @@ from pathlib import Path
 import jsonschema
 import pytest
 
+from emblink_studio_core.errors import CoreError
 from emblink_studio_core.workspace import Workspace
 
 RTOS = os.environ.get("EMBLINK_STUDIO_TEST_RTOS")
 pytestmark = pytest.mark.skipif(not RTOS, reason="EMBLINK_STUDIO_TEST_RTOS is not set")
+
+
+def validate(board_dir):
+    """The validation, or a failure that shows what the generator printed."""
+    try:
+        return Workspace.open(board_dir).validate()
+    except CoreError as exc:
+        pytest.fail(f"{exc.message}\n{(exc.data or {}).get('output', '')}")
 
 BOARDS = {
     # board: (part, cpu_hz, a pin in use and its signal, the first memory region)
@@ -72,7 +81,7 @@ def test_opening_a_board_shows_its_model(board_id, schemas):
 
 @pytest.mark.parametrize("board_id", sorted(BOARDS))
 def test_the_committed_boards_are_valid(board_id, schemas):
-    result = Workspace.open(Path(RTOS) / "boards" / board_id).validate()
+    result = validate(Path(RTOS) / "boards" / board_id)
     jsonschema.validate(result, schemas["project.validate.result.schema.json"])
     assert result["valid"] is True, result
     assert result["errors"] == 0
@@ -110,7 +119,7 @@ def test_errors_are_reported_where_they_are(tmp_path, schemas):
         expected[path] = next(i for i, line in enumerate(lines, 1) if needle in line)
     board_yaml.write_text(text, encoding="utf-8")
 
-    result = Workspace.open(root / board_rel).validate()
+    result = validate(root / board_rel)
     jsonschema.validate(result, schemas["project.validate.result.schema.json"])
     assert result["valid"] is False
     errors = {d["path"]: d for d in result["diagnostics"] if d["severity"] == "error"}

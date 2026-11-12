@@ -55,7 +55,7 @@ def test_files_outside_the_checkout_stay_absolute():
         "/home/me/boards/st/x/board.yaml:7: name: 'nucleo_f446re' differs from its directory 'x'",
         ROOT,
     )
-    assert d["file"] == "/home/me/boards/st/x/board.yaml"
+    assert d["file"] == str(Path("/home/me/boards/st/x/board.yaml"))
     assert d["path"] == "name"
 
 
