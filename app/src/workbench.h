@@ -89,7 +89,7 @@ class Workbench : public QObject
     }
 
     // Bumped when a change to the views would make old saved layouts misleading.
-    static constexpr int kLayoutVersion = 1;
+    static constexpr int kLayoutVersion = 2; // 2: Board and Problems join the views
 
   signals:
     void namedLayoutsChanged();

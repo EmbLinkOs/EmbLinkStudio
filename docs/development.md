@@ -33,11 +33,19 @@ core/.venv/bin/emblink-studio-core board list ~/EmbLinkRTOS          # every met
 core/.venv/bin/emblink-studio-core project validate ~/EmbLinkRTOS/boards/st/nucleo_f446re
 ```
 
+Make `core/.venv` before the first `cmake --preset dev`: the build then runs the core with that Python, which
+has the core's dependencies (PyYAML, for the RTOS's generator). Configured before it existed, run
+`cmake --preset dev -DPython3_EXECUTABLE=$PWD/core/.venv/bin/python` once.
+
 Run the application: `build/dev/app/EmbLinkStudio.app/Contents/MacOS/EmbLinkStudio` on macOS,
 `build/dev/app/EmbLinkStudio` elsewhere. It runs the core from `core/src` with the Python CMake found; set
 `EMBLINK_STUDIO_CORE` to an installed `emblink-studio-core` to use that instead.
 
-Options for a run: `--language en|fr|zh_CN` uses that language without saving it, `--stage
+Open a board with File › Open Board (⌘O): a board directory of an EmbLinkRTOS checkout, such as
+`~/EmbLinkRTOS/boards/st/nucleo_f446re`. Validating and generating run the checkout's generator, so the
+application asks once to trust the checkout.
+
+Options for a run: `--open <board>` opens that board, `--language en|fr|zh_CN` uses that language without saving it, `--stage
 configure|code|debug|verify` opens on that stage, and `--screenshot <file>` saves a picture of the window and
 quits.
 

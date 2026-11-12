@@ -11,6 +11,7 @@
 qt_add_library(emblink_studio_corelink STATIC
     src/framing.cpp src/framing.h
     src/coreclient.cpp src/coreclient.h
+    src/session.cpp src/session.h
 )
 target_include_directories(emblink_studio_corelink PUBLIC src)
 target_link_libraries(emblink_studio_corelink PUBLIC Qt6::Core)
@@ -34,6 +35,8 @@ qt_add_library(emblink_studio_ui STATIC
     src/segmentedcontrol.cpp src/segmentedcontrol.h
     src/language.cpp src/language.h
     src/settingsdialog.cpp src/settingsdialog.h
+    src/boardview.cpp src/boardview.h
+    src/problemsview.cpp src/problemsview.h
 )
 target_include_directories(emblink_studio_ui PUBLIC src)
 target_link_libraries(emblink_studio_ui PUBLIC Qt6::Widgets)
@@ -75,7 +78,7 @@ set_target_properties(emblinkstudio PROPERTIES
 # source. `cmake --build --preset dev --target update_translations` refreshes the .ts files
 # from the sources; translate them in Qt Linguist. They are compiled into the frame library.
 qt_add_translations(TARGETS emblink_studio_ui
-    SOURCE_TARGETS emblinkstudio emblink_studio_ui
+    SOURCE_TARGETS emblinkstudio emblink_studio_ui emblink_studio_corelink
     TS_FILES i18n/emblinkstudio_fr.ts i18n/emblinkstudio_zh_CN.ts
     RESOURCE_PREFIX /i18n
     LUPDATE_OPTIONS -no-obsolete -locations none
@@ -101,8 +104,14 @@ if(EMBLINK_STUDIO_BUILD_TESTS)
     endforeach()
     # qt_standard_project_setup() makes executables GUI programs on Windows and bundles on
     # macOS; a test is a console program, so its output reaches CTest on every system.
+    qt_add_executable(tst_session tests/tst_session.cpp)
+    target_link_libraries(tst_session PRIVATE emblink_studio_corelink emblink_studio_ui Qt6::Test)
+    target_compile_definitions(tst_session PRIVATE
+        EMBLINK_STUDIO_FAKE_HWGEN="${PROJECT_SOURCE_DIR}/core/tests/fake_hwgen.py")
+    add_test(NAME tst_session COMMAND tst_session)
+
     set_target_properties(tst_framing tst_coreclient tst_workbench tst_theme tst_segmentedcontrol
-        tst_language PROPERTIES WIN32_EXECUTABLE OFF MACOSX_BUNDLE OFF)
+        tst_language tst_session PROPERTIES WIN32_EXECUTABLE OFF MACOSX_BUNDLE OFF)
     target_compile_definitions(tst_theme PRIVATE
         EMBLINK_STUDIO_TOKENS="${PROJECT_SOURCE_DIR}/docs/design/tokens.json")
 endif()
