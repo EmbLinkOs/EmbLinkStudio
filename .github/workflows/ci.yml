@@ -72,14 +72,6 @@ jobs:
       - name: Failed tests, again, with their full output
         if: failure()
         run: ctest --preset dev --rerun-failed --extra-verbose
-      - name: TEMPORARY tst_theme on Windows
-        if: failure() && runner.os == 'Windows'
-        env:
-          QT_QPA_PLATFORM: offscreen
-        working-directory: build/dev/app
-        run: |
-          & ../tst_theme.exe -v2 -maxwarnings 0 2>&1 | Out-String -Stream
-          echo "exit code: $LASTEXITCODE"
 
   format:
     name: clang-format
