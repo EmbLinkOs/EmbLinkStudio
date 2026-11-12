@@ -144,6 +144,30 @@ Everything a professional embedded developer expects, plus what only an RTOS-awa
 
 **Code text uses VS Code's metrics on macOS:** a 12 px monospace font on 18 px lines (owner, 2026-11-12).
 
+## 4a. The code editor
+
+First draft, 2026-11-12 (artboard "Direction B + C · Code"). The best of the editors people like, plus what only an
+RTOS-aware editor can show:
+
+| From | What |
+| --- | --- |
+| VS Code | tabs, breadcrumbs, the minimap with problem marks, peek definition, Problems, Terminal, split editor, its line metrics |
+| CLion | inlay hints with parameter names, code lenses above functions, quick fixes |
+| Xcode | issues shown at the end of their line, each with its fixes |
+| Sublime | one box to go to anything: files, symbols, pins, threads, settings, commands |
+| GitLens | change bars in the gutter, blame on the current line |
+
+Only EmbLink Studio:
+
+- **Lenses with RTOS facts:** the thread a function runs as, its priority, stack and last high-water mark, its flash
+  size from the build; an interrupt handler's IRQ, class and priority.
+- **Hardware names explained:** `pin_led`, `dev_bme280`, `log_q` or `EXTI15_10_IRQn` open a card with the pin, the bus,
+  the queue or the IRQ they stand for, where they are defined, and their state on the last run.
+- **RTOS checks with fixes:** a blocking call in an interrupt handler (an error, with "use EMB_NO_WAIT"); a call chain
+  deeper than its thread's stack, from `-fstack-usage` (with "raise the stack in system.yaml").
+- **Completion that knows contexts:** each function says whether it is safe in an interrupt.
+- **Generated code read-only,** with a banner pointing to Configure; renaming a generated name sends you to its source.
+
 ## 5. Open questions
 
 1. **Qt Quick or Qt Widgets for the frame.** A fluid, animated macOS feel is far easier in Qt Quick. The
