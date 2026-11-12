@@ -106,10 +106,12 @@ class TestTheme : public QObject
         const QFont caption = m_theme.font(QStringLiteral("caption"));
         QCOMPARE(caption.capitalization(), QFont::AllUppercase);
         QCOMPARE(caption.weight(), QFont::DemiBold);
-        // Only installed families are named: never one Qt would have to search for.
+        // Only installed families are named: never one Qt would have to search for. (Where
+        // no font is installed at all, as on Windows' offscreen platform, there is none to name.)
         const QStringList installed = QFontDatabase::families();
-        for (const QString &family : caption.families())
-            QVERIFY2(installed.contains(family), qPrintable(family));
+        if (!installed.isEmpty())
+            for (const QString &family : caption.families())
+                QVERIFY2(installed.contains(family), qPrintable(family));
         QVERIFY(caption.pointSizeF() < m_theme.font(QStringLiteral("small")).pointSizeF());
     }
 
