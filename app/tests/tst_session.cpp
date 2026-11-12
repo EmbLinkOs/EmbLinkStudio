@@ -168,7 +168,7 @@ class TestSession : public QObject
         QCOMPARE(view.value(QStringLiteral("Clocks"), QStringLiteral("CPU")),
                  QStringLiteral("48 MHz"));
         QCOMPARE(view.value(QStringLiteral("Pins in use"), QStringLiteral("PA0")),
-                 QStringLiteral("uart0_tx · pins.uart0.tx"));
+                 QStringLiteral("af1 (uart0_tx) · pins.uart0.tx"));
         core.stop();
     }
 

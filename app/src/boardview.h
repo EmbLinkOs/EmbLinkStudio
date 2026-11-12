@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "format.h"
+
 #include <QHash>
 #include <QJsonObject>
 #include <QScrollArea>
@@ -71,10 +73,5 @@ class BoardView : public QScrollArea
     QStringList m_groupTitles;
     QHash<QString, QString> m_values;
 };
-
-// "180 MHz", "8 MHz", "32.768 kHz": a frequency in the interface's language.
-QString formatHz(double hz);
-// "512 KB", "16 KB", "1.5 MB".
-QString formatBytes(double bytes);
 
 } // namespace emblinkstudio

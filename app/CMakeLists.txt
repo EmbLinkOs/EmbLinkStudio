@@ -35,8 +35,12 @@ qt_add_library(emblink_studio_ui STATIC
     src/segmentedcontrol.cpp src/segmentedcontrol.h
     src/language.cpp src/language.h
     src/settingsdialog.cpp src/settingsdialog.h
+    src/format.cpp src/format.h
     src/boardview.cpp src/boardview.h
     src/problemsview.cpp src/problemsview.h
+    src/clocktreeview.cpp src/clocktreeview.h
+    src/memoryview.cpp src/memoryview.h
+    src/devicesview.cpp src/devicesview.h
 )
 target_include_directories(emblink_studio_ui PUBLIC src)
 target_link_libraries(emblink_studio_ui PUBLIC Qt6::Widgets)
@@ -110,8 +114,13 @@ if(EMBLINK_STUDIO_BUILD_TESTS)
         EMBLINK_STUDIO_FAKE_HWGEN="${PROJECT_SOURCE_DIR}/core/tests/fake_hwgen.py")
     add_test(NAME tst_session COMMAND tst_session)
 
+    # Stage S2's golden test, against a real EmbLinkRTOS checkout (EMBLINK_STUDIO_TEST_RTOS).
+    qt_add_executable(tst_golden tests/tst_golden.cpp)
+    target_link_libraries(tst_golden PRIVATE emblink_studio_corelink emblink_studio_ui Qt6::Test)
+    add_test(NAME tst_golden COMMAND tst_golden)
+
     set_target_properties(tst_framing tst_coreclient tst_workbench tst_theme tst_segmentedcontrol
-        tst_language tst_session PROPERTIES WIN32_EXECUTABLE OFF MACOSX_BUNDLE OFF)
+        tst_language tst_session tst_golden PROPERTIES WIN32_EXECUTABLE OFF MACOSX_BUNDLE OFF)
     target_compile_definitions(tst_theme PRIVATE
         EMBLINK_STUDIO_TOKENS="${PROJECT_SOURCE_DIR}/docs/design/tokens.json")
 endif()

@@ -81,10 +81,22 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
       - run: cmake --preset dev
       - run: cmake --build --preset dev
+      - name: EmbLinkRTOS, for stage S2's golden test
+        uses: actions/checkout@v7
+        with:
+          repository: EmbLinkOs/EmbLinkRTOS
+          # The same revision as the core's acceptance tests.
+          ref: a2cb045cf27a0f53bc53ce110d3bffc4d381817f
+          path: rtos
+          persist-credentials: false
       - run: ctest --preset dev
+        env:
+          EMBLINK_STUDIO_TEST_RTOS: ${{ github.workspace }}/rtos
       - name: Failed tests, again, with their full output
         if: failure()
         run: ctest --preset dev --rerun-failed --extra-verbose
+        env:
+          EMBLINK_STUDIO_TEST_RTOS: ${{ github.workspace }}/rtos
 
   format:
     name: clang-format

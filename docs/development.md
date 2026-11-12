@@ -24,8 +24,10 @@ core/.venv/bin/pytest core    # the core's tests, including the protocol schemas
 core/.venv/bin/ruff check . && core/.venv/bin/ruff format --check .
 ```
 
-The core's acceptance tests run against a real EmbLinkRTOS checkout: set `EMBLINK_STUDIO_TEST_RTOS` to it, as
-CI does with the RTOS at a pinned commit; without it they are skipped.
+The core's acceptance tests and the application's golden test (`tst_golden`: every value the Board, Clock
+tree, Memory and Devices views show equals the board's `hw.json`, `board.md` and `build_report.md`) run against
+a real EmbLinkRTOS checkout: set `EMBLINK_STUDIO_TEST_RTOS` to it, as CI does with the RTOS at a pinned commit;
+without it they are skipped. `EMBLINK_STUDIO_TEST_RTOS=~/EmbLinkRTOS ctest --preset dev` runs it.
 
 ```sh
 EMBLINK_STUDIO_TEST_RTOS=~/EmbLinkRTOS core/.venv/bin/pytest core
@@ -45,7 +47,8 @@ Open a board with File › Open Board (⌘O): a board directory of an EmbLinkRTO
 `~/EmbLinkRTOS/boards/st/nucleo_f446re`. Validating and generating run the checkout's generator, so the
 application asks once to trust the checkout.
 
-Options for a run: `--open <board>` opens that board, `--language en|fr|zh_CN` uses that language without saving it, `--stage
+Options for a run: `--open <board>` opens that board, `--view clocks|memory|devices|board` brings that view to
+the front, `--language en|fr|zh_CN` uses that language without saving it, `--stage
 configure|code|debug|verify` opens on that stage, and `--screenshot <file>` saves a picture of the window and
 quits.
 
