@@ -289,8 +289,9 @@ The visual language is written down as tokens in [`tokens.json`](tokens.json) (a
 the same file): colour, type, space, radius, size, elevation and motion. The Qt frame reads them; nothing else
 defines a colour, a size, a timing or how text is laid out.
 
-**Three languages (owner, 2026-11-12).** The app ships in three languages, English as the source; the owner names
-the other two. Every visible string comes from a Qt translation file, layouts leave room for text 35% longer than
+**Three languages (owner, 2026-11-12):** English (the source), French and Simplified Chinese. Chinese text uses
+PingFang SC on macOS and a bundled Noto Sans SC on Windows and Linux, after Inter; it breaks between characters and
+is never set below 12 px, so the 11 px caption becomes 12 px without capitals. No layout is mirrored. Every visible string comes from a Qt translation file, layouts leave room for text 35% longer than
 English, and labels never get a fixed width. Option keys, register, pin and file names, spec references and code are
 never translated. Numbers and dates follow the chosen language; hex values never do.
 
