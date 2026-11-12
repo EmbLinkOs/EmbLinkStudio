@@ -53,10 +53,18 @@ The owner's reference is Microchip's MPLAB Code Configurator (MCC), its device r
 - Every change still goes through the core into `board.yaml` and `system.yaml`, shown as a diff before anything is
   written (specification §5, §6).
 
-**From MCC, still to bring in** (its Pin Manager and Pins view): per-pin *start high*, analog, direction, weak
-pull-up, open-drain and interrupt-on-change; and its **pin grid**, functions in rows and pins in columns, each cell a
-lock that is free, taken or locked. The first draft's pin and peripheral options are too few: the next round widens
-both (owner, 2026-11-12).
+**Widened on 2026-11-12, after the owner's feedback on the first draft:**
+
+- **Pin manager:** every I/O pin with its mode (input, output, analog, alternate), pull, output type, speed, start
+  level and interrupt edge, each active only where the mode allows it; filters for pins in use, free pins and all
+  50; board-wired pins (the LED, the button, the ST-LINK) fixed by the board description.
+- **Pin grid,** as in MCC: functions down, the 50 I/O pins across grouped by port, each cell free, assigned, in
+  conflict, or fixed and locked. A click moves a function to another pin that can carry it; for the ADC it picks
+  channels.
+- **Peripheral forms in sections** (basic, advanced, interrupts and DMA, driver): flow control, filters, triggers,
+  prescalers, the DMA stream and channel each request uses, interrupt priorities, the EmbLinkRTOS driver class, the
+  device name and the devices on a bus. Checks such as an ADC clock above 36 MHz, or a button pull-down fighting the
+  board's pull-up.
 
 ## 3a. Configuring the RTOS
 
@@ -84,6 +92,24 @@ both (owner, 2026-11-12).
   threads at one priority, a timer period that is not a whole number of ticks, no debug descriptor.
 - In the Debug stage the same graph comes alive: threads light up as they run, queues fill and drain.
 
+## 3b. Every board, every chip
+
+EmbLink Studio supports every board EmbLinkRTOS describes: 12 boards of 7 families today, from an 8-bit AVR to
+simulated boards with no pins. **No screen is designed for one chip.** The mockups show the NUCLEO-F446RE only as an
+example; every screen draws from the board's resolved model (`hw.json`), as the specification requires (§4, §6).
+
+| What changes per chip | How the screens adapt |
+| --- | --- |
+| The package (`lqfp64`, `lqfp144`, `qfn60`, `pdip28`, none) | The chip is drawn from it: four sides for QFP and QFN (QFN with its pad), two rows for DIP, a ball grid for BGA. A simulated board (MPS2, QEMU) shows its memory map and peripherals instead |
+| How a pin gets its function: an AF number per pin (STM32), a function slot per GPIO (RP2350), or fixed by the peripheral (AVR) | The pin grid shows `AF7`, `F3`, or a fixed cell that cannot be chosen. Conflicts and moves work the same way for all three |
+| The peripherals and what they offer (DMA, PIO, FPU, MPU) | The catalogue is the chip's; forms show only the sections the chip has, so no DMA section on an ATmega |
+| The clock tree | Every readout (baud error, SCL, ADC rate) is computed by the core from the chip's clocks, never in the GUI |
+| What the kernel supports on the chip | The Kernel page follows the port's `Kconfig` defaults and limits: `tiny` on AVR, reboot on fault, no debug descriptor |
+
+A board is chosen when a project is created (the Start screen), and the board pill in the toolbar shows and changes
+it for an open project. A board the views do not cover fully still opens: what they cannot show is listed read-only
+with its source (specification §1).
+
 ## 4. A complete debugger
 
 Everything a professional embedded developer expects, plus what only an RTOS-aware tool can show:
@@ -97,6 +123,180 @@ Everything a professional embedded developer expects, plus what only an RTOS-awa
 | Program | Call stack per thread, local variables, watch list, live expressions |
 | RTOS | Threads and their states, objects, stacks and high-water marks, the timeline |
 | Trouble | Fault analyzer, crash-record decoding, SWO/ITM console and trace |
+
+**First draft, 2026-11-12** (artboard "Direction B + C · Debug"), halted at a breakpoint on the NUCLEO-F446RE:
+
+- the controls in the toolbar (continue, pause, step over, into, out, by instruction, reset, stop) and a status pill
+  that says why the target stopped: a breakpoint, a step, a watchpoint, a pause;
+- the RTOS threads from the debug descriptor, each with its state and stack high-water mark, and the call stack of
+  the selected one, from its live registers or from the context the kernel saved;
+- breakpoints and watchpoints, with the hardware they use (Cortex-M4: 6 FPB comparators, 4 DWT comparators);
+- the source with the Thumb-2 disassembly interleaved, the current line and instruction, values shown inline;
+- variables: locals, a watch list, and live expressions read over SWD while the target runs;
+- core and FPU registers, the ones the last step changed in amber; peripheral registers decoded from the SVD, with
+  their fields, writable while halted;
+- a bottom panel: the console (UART, ITM over SWO, GDB), the RTOS timeline from the trace ring, the kernel objects
+  live, and the last crash record decoded, linked back to Configure › RTOS;
+- a **memory viewer** as an editor tab, like VS Code's hex editor: go to an address or a symbol, the chip's regions
+  (from the board) and a clickable map of the build's sections and thread stacks, a 16-byte grid as bytes, 16-bit,
+  32-bit or float values with ASCII, symbols coloured in place, changed bytes marked, a data inspector that decodes a
+  pointer to the symbol it points at, writes while halted, and a warning where a read has side effects.
+
+**Code text uses VS Code's metrics on macOS:** a 12 px monospace font on 18 px lines (owner, 2026-11-12).
+
+## 4a. The code editor
+
+First draft, 2026-11-12 (artboard "Direction B + C · Code"). The best of the editors people like, plus what only an
+RTOS-aware editor can show:
+
+| From | What |
+| --- | --- |
+| VS Code | tabs, breadcrumbs, the minimap with problem marks, peek definition, Problems, Terminal, split editor, its line metrics |
+| CLion | inlay hints with parameter names, code lenses above functions, quick fixes |
+| Xcode | issues shown at the end of their line, each with its fixes |
+| Sublime | one box to go to anything: files, symbols, pins, threads, settings, commands |
+| GitLens | change bars in the gutter, blame on the current line |
+
+Only EmbLink Studio:
+
+- **Lenses with RTOS facts:** the thread a function runs as, its priority, stack and last high-water mark, its flash
+  size from the build; an interrupt handler's IRQ, class and priority.
+- **Hardware names explained:** `pin_led`, `dev_bme280`, `log_q` or `EXTI15_10_IRQn` open a card with the pin, the bus,
+  the queue or the IRQ they stand for, where they are defined, and their state on the last run.
+- **RTOS checks with fixes:** a blocking call in an interrupt handler (an error, with "use EMB_NO_WAIT"); a call chain
+  deeper than its thread's stack, from `-fstack-usage` (with "raise the stack in system.yaml").
+- **Completion that knows contexts:** each function says whether it is safe in an interrupt.
+- **Generated code read-only,** with a banner pointing to Configure; renaming a generated name sends you to its source.
+
+### Every part is a panel (owner, 2026-11-12)
+
+As in VS Code, and further: Explorer, Outline, Source Control, Commits, Problems, Build, Terminal, Serial and
+Extensions are each a panel of their own, with their own scroll. Any panel can be dragged by its title, or moved from
+its menu, to the left or right side bar, the panel area below, the editor area as a tab, or a floating window. Side
+bars stack panels and fold them; the panel area shows them as tabs and can be maximized. The editor splits into
+groups, and tabs move between them. Splitters resize everything. Layouts can be saved, with presets (Default, Focus,
+Review, Terminal), per project (§3, specification §6).
+
+**Polish, 2026-11-12 (owner: "elegant, still pro").** Every area is a card with rounded corners on a darker ground,
+6 px apart. Panel titles in normal case, actions that brighten on hover, a slim indicator in the activity bar, and a
+quiet status bar. Panels, tabs and floating windows are moved by dragging, with docking guides as in Visual Studio:
+release on a guide to dock (left, right, panel area, editor tab, split), anywhere else to float. The Explorer has
+type icons, folders that fold, indent guides, git colours on names and folders, ignored and generated folders
+marked, and a filter.
+
+### Extensions, Git first
+
+Features that not every user needs are **extensions**, as in VS Code, so they can be turned off: Git, the language
+server, the serial monitor, the trace timeline, the EmbSIM runner. **Git** is built in: stage, unstage, commit with
+the DCO sign-off on by default, push, branches, the commit graph, diffs in the editor, change bars and blame. Turning
+an extension off removes its panels and its decorations in the editor.
+
+## 4b. Start
+
+First draft, 2026-11-12 (artboard "Direction B + C · Start"):
+
+- **The welcome window:** the app's mark and version, four actions (new project, open, clone from Git, run an
+  example), the board **connected now** (its probe found on USB) with "new project for this board", recent
+  projects with their board and last build, and the examples EmbLinkRTOS ships.
+- **New project in three steps,** each one shown in a stepper that keeps the choices made:
+  1. **Board:** every board EmbLinkRTOS describes, filtered (connected, hardware, simulated) and searched, each
+     drawn from its package and marked connected, draft (not yet curated), simulated, or not available yet (an
+     ESP32 whose SoC is not described).
+  2. **Template:** empty, blinky, console shell, sensor and logger, SPI device. A template that needs hardware the
+     board does not describe is shown with what is missing ("this board has no LED the RTOS can drive").
+  3. **Details:** name, location, the EmbLinkRTOS release pinned, the profile from the board's defaults, the
+     toolchain found or downloaded, git with a signed-off first commit, build right away.
+- **Creating** shows each step as the core runs it: the manifests, the pinned RTOS, generation, CMake, git, the
+  first build and its sizes. Then: open in Configure or Code, or flash and run.
+- **A cloned project opens untrusted** (specification §9): its files are shown, nothing in it runs until trusted.
+
+**Second draft (owner, 2026-11-12: "good ideas, implementation far below the other screens").** Rebuilt to the
+standard of Code: each board drawn as it looks (the NUCLEO's white board with its ST-LINK part and blinking LD2, the
+Pico 2 W's slim green board, the Uno's teal board, the micro:bit's LED matrix, the ESP32 modules, simulated boards as
+blueprints); the connected board as the hero of the welcome window; recent projects grouped by date with their board;
+new project as a sheet over the window, with a vendor sidebar, template cards that preview their threads and queues,
+a System Settings form beside a live `emb-project.yaml`, and creation shown on the board, whose LED lights when done.
+
+## 4c. Verify
+
+First draft, 2026-11-12 (artboard "Direction B + C · Verify"). Verify is where a project gets its evidence, under the
+rules EmbLinkRTOS already keeps (`docs/engineering/timing-and-evidence.md`, the support matrix, the HIL records). The
+screen never claims more than the evidence supports.
+
+- **Run on** the board (through its probe) or its emulator (EmbSIM, QEMU), in the checked or release build. **Run
+  suite** flashes each test image, checks that the flashed image is the one built (`image_sha256` against
+  `flashed_sha256`), and streams results in as they arrive.
+- **Two suites:** EmbLinkRTOS on this board (for the NUCLEO-F446RE: 41 images, 254 cases, grouped as kernel,
+  interrupts and the port, devices and drivers, faults and crash records, benchmarks) and the project's own tests.
+- **Each image** shows its cases with the real outcomes: passed, failed, expected failure, skipped with a reason,
+  disabled, not run. A failed case shows its message and **Debug this case**, which opens Debug on that image,
+  stopped where it failed.
+- **The support tier** of the board (1 hardware, 2 emulated, 3 described), from the generated matrix, never declared
+  by the board; the history of archived runs; the other boards in the matrix.
+- **Console, Run record and Benchmarks** below: the `hil:` console, the `emb-hil-archive v1` record (board, preset,
+  build, configuration, git commit, port, flash command, hashes), and benchmarks against FreeRTOS built the same way.
+- **What this evidence supports:** each claim marked as supported, qualified or not supported, with its basis. A
+  benchmark is a measured mean, not a maximum and not a bound; an emulator run is functional evidence only
+  (SIM-003); worst-case latency needs an established bound before it can be claimed.
+- **Archive as evidence** is offered only for a hardware run where everything passed. It files the records
+  (`tools/hil/archive.py`) and shows the entry added to `hardware-runs.json`. A failing or partial run is kept,
+  never archived as support.
+
+## 4d. One frame for every screen
+
+The polish pass, 2026-11-12. Configure (Hardware, RTOS, Kernel), Code, Debug, Start and Verify now share one frame:
+
+- **The title bar:** the window controls, the project, the four stages as one segmented control (each a link to
+  its screen), then what belongs to the stage: the board and Generate and Build on Configure, the debug controls and
+  the halt state on Debug, the run target on Verify.
+- **Cards on a dark ground:** each panel is a rounded card (12 px) on a near-black ground, 6 px apart, as in Code.
+  Inside a card, groups are a faint fill with hairline separators, the way System Settings groups its rows.
+- **The same controls everywhere:** segmented controls, switches with a shadowed knob, status dots, a toast at the
+  bottom, and one palette for state (cyan for the selection and actions, green passed, amber warning, red error).
+- **Configure › Hardware** gains a finer chip, peripheral cards with a colour edge, a legend that selects, a
+  floating zoom control, peripherals listed with their own tiles, and memory shown as capacity bars. The behaviour
+  is unchanged: live readouts, conflicts and the fix, the pin manager and the pin grid.
+- **Configure › Kernel** moves its search and the Hardware | RTOS | Kernel switch into the header of its centre card.
+- **Debug** splits threads, the call stack and breakpoints into cards, puts the editor and the panel in two cards,
+  and uses segmented tabs for the inspector.
+
+## 4e. Signature moments
+
+Owner, 2026-11-12: build all five (artboard "Signature moments"). Motion everywhere lasts 200 to 400 ms, eases
+out, and starts where the cause is.
+
+1. **Hello, board** (Start). Plugging in a board names it and draws it as it looks, before anything is asked.
+   Identity comes from the probe and the chip's ID code, never a guess. The drawing shows the real board: LD2 in it
+   follows GPIOA ODR read over SWD. The greeting ends in one next step, "New project for this board".
+2. **One click from conflict to fixed** (Configure › Hardware). The conflict glows on the pin and the fix sits
+   beside it, offered only when valid. The route leaves PA5 and draws itself to PB3; amber turns green only when the
+   generator accepts the board.
+3. **Priority is a place** (Configure › RTOS). Dragging a thread snaps it to real levels (never 0, the idle
+   level). The ceiling follows its highest user, and checks appear while dragging, each citing its rule.
+4. **From a crash to the fix** (Debug, Configure › RTOS, Run). The crash record survives the reset. Every claim
+   comes from it (CFSR, BFAR, the stack at the fault). The fix links to the exact field, prefilled, never applied
+   silently, and the next run shows the new high-water mark.
+5. **The hardware seal** (Verify). The seal appears only when every test passed on the board and the run is
+   archived, never from emulation or a partial run. It names the board, the date and the record behind it, and the
+   matrix is regenerated from the archive.
+
+Every pin on the chip in Configure › Hardware now carries its name, and clicking a pin or its name opens its row
+in the pin table.
+
+## 4f. Design tokens, languages and Settings
+
+The visual language is written down as tokens in [`tokens.json`](tokens.json) (artboard "Design tokens", built from
+the same file): colour, type, space, radius, size, elevation and motion. The Qt frame reads them; nothing else
+defines a colour, a size, a timing or how text is laid out.
+
+**Three languages (owner, 2026-11-12):** English (the source), French and Simplified Chinese. Chinese text uses
+PingFang SC on macOS and a bundled Noto Sans SC on Windows and Linux, after Inter; it breaks between characters and
+is never set below 12 px, so the 11 px caption becomes 12 px without capitals. No layout is mirrored. Every visible string comes from a Qt translation file, layouts leave room for text 35% longer than
+English, and labels never get a fixed width. Option keys, register, pin and file names, spec references and code are
+never translated. Numbers and dates follow the chosen language; hex values never do.
+
+**Settings is built directly in Qt (owner, 2026-11-12),** from these tokens, without a mockup. The language is one of
+its first settings, applied without a restart.
 
 ## 4g. How you move around
 
@@ -133,16 +333,18 @@ walk the selection history; with nothing selected it shows the project.
    specification chose Widgets for the frame (§11 q2), and the docking library (Qt Advanced Docking System) is
    Widgets-only. Before deciding, build the same small screen both ways and compare.
 2. **Light appearance.** Dark is designed first; a light appearance, as macOS offers, follows the same tokens.
-3. **The other screens:** Start, Code, Debug, Verify.
+3. **The other screens:** every screen has a draft in the common frame (§4d); the signature moments are drafted (§4e).
 4. **Drawing a connection:** dragging from a thread to an object to say who uses it.
+5. **The word for IDE plug-ins.** "Module" already means a firmware code package (EmbLinkRTOS-parts, specification §5,
+   §8). The mockups say **extension** for IDE plug-ins such as Git, to keep the two apart; the owner decides.
 
 ## 6. How the design proceeds
 
 One step at a time, each decision written here before anything is built:
 
 1. The feeling (§1): done.
-2. The signature moments: the 3 to 5 interactions people remember.
+2. The signature moments: drafted, five (§4e).
 3. How you move around: stages, the command palette, the inspector, the keyboard: drafted (§4g).
-4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere.
+4. The visual language, as design tokens (colour, type, spacing, radii, motion) that Qt uses everywhere: drafted (§4f).
 5. The screens, each mocked up and iterated: Configure › Hardware and Configure › RTOS (first drafts done; the
    layout is liked, the options need widening), then Start, Code, Debug, Verify.
