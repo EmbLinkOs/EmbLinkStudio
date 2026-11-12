@@ -9,9 +9,12 @@
  * @brief   Implementation of MainWindow: layout, menus, About dialog, core lifecycle.
  *
  * @details
- * Builds the status label, the restart button, the "Core log" dock (a QDockWidget
- * until Qt Advanced Docking System lands, spec section 11 question 1) and the File,
- * View and Help menus. The About dialog shows the third-party notices bundled as the
+ * Builds two Workbench views, "Core" (the status label and the restart button) and
+ * "Core log", and the File, View and Help menus. The View menu shows or hides each
+ * view, opens and saves named layouts, and resets the layout. The layout is saved to
+ * the user's settings when the window closes and restored when it opens (per project
+ * in .emblink-studio/ once projects exist, spec section 6). The About dialog shows the third-party
+ * notices bundled as the
  * :/NOTICES.md resource. The core is started when the window is built and stopped
  * when it closes.
  *
@@ -21,17 +24,20 @@
  */
 
 #include "mainwindow.h"
+#include "workbench.h"
 
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QDockWidget>
 #include <QFile>
+#include <QInputDialog>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenuBar>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QSettings>
 #include <QTextBrowser>
 #include <QVBoxLayout>
 
@@ -43,31 +49,44 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     setWindowTitle(tr("EmbLink Studio"));
     resize(960, 600);
 
-    auto *central = new QWidget(this);
-    auto *layout = new QVBoxLayout(central);
-    m_status = new QLabel(central);
+    m_workbench = new Workbench(this);
+
+    auto *coreView = new QWidget;
+    auto *layout = new QVBoxLayout(coreView);
+    m_status = new QLabel(coreView);
     m_status->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
     m_status->setWordWrap(true);
-    m_restart = new QPushButton(tr("&Restart the core"), central);
+    m_restart = new QPushButton(tr("&Restart the core"), coreView);
     m_restart->setVisible(false);
     layout->addWidget(m_status);
     layout->addWidget(m_restart, 0, Qt::AlignLeft);
     layout->addStretch();
-    setCentralWidget(central);
 
-    // QDockWidget until Qt Advanced Docking System lands (decided: spec section 11, question 1).
-    auto *dock = new QDockWidget(tr("Core log"), this);
-    dock->setObjectName(QStringLiteral("coreLog"));
-    m_log = new QPlainTextEdit(dock);
+    m_log = new QPlainTextEdit;
     m_log->setReadOnly(true);
     m_log->setMaximumBlockCount(5000);
-    dock->setWidget(m_log);
-    addDockWidget(Qt::BottomDockWidgetArea, dock);
+
+    // The ids name the views in saved layouts: keep them stable.
+    m_workbench->addView(QStringLiteral("core"), tr("Core"), coreView, ads::CenterDockWidgetArea);
+    m_workbench->addView(QStringLiteral("coreLog"), tr("Core log"), m_log,
+                         ads::BottomDockWidgetArea);
+    m_workbench->captureDefaultLayout();
+    {
+        QSettings settings;
+        settings.beginGroup(QStringLiteral("layout"));
+        m_workbench->restore(settings);
+    }
 
     QMenu *file = menuBar()->addMenu(tr("&File"));
     file->addAction(tr("&Quit"), QKeySequence::Quit, this, &QWidget::close);
     QMenu *view = menuBar()->addMenu(tr("&View"));
-    view->addAction(dock->toggleViewAction());
+    for (ads::CDockWidget *v : m_workbench->views())
+        view->addAction(v->toggleViewAction());
+    view->addSeparator();
+    m_layouts = view->addMenu(tr("&Layouts"));
+    connect(m_layouts, &QMenu::aboutToShow, this, &MainWindow::fillLayoutsMenu);
+    view->addAction(tr("&Save layout as..."), this, &MainWindow::saveLayoutAs);
+    view->addAction(tr("&Reset layout"), m_workbench, &Workbench::resetLayout);
     QMenu *help = menuBar()->addMenu(tr("&Help"));
     help->addAction(tr("&About EmbLink Studio"), this, &MainWindow::showAbout);
 
@@ -127,8 +146,39 @@ void MainWindow::showAbout()
     dialog.exec();
 }
 
+void MainWindow::fillLayoutsMenu()
+{
+    m_layouts->clear();
+    const QStringList names = m_workbench->namedLayouts();
+    if (names.isEmpty()) {
+        m_layouts->addAction(tr("No saved layouts"))->setEnabled(false);
+        return;
+    }
+    for (const QString &name : names)
+        m_layouts->addAction(name, this, [this, name] { m_workbench->openNamedLayout(name); });
+    m_layouts->addSeparator();
+    QMenu *remove = m_layouts->addMenu(tr("&Delete"));
+    for (const QString &name : names)
+        remove->addAction(name, this, [this, name] { m_workbench->removeNamedLayout(name); });
+}
+
+void MainWindow::saveLayoutAs()
+{
+    bool ok = false;
+    const QString name = QInputDialog::getText(this, tr("Save layout"),
+                                               tr("Name of this layout, such as Debug:"),
+                                               QLineEdit::Normal, QString(), &ok)
+                             .trimmed();
+    if (ok && !name.isEmpty())
+        m_workbench->saveNamedLayout(name);
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    QSettings settings;
+    settings.beginGroup(QStringLiteral("layout"));
+    m_workbench->save(settings);
+    settings.endGroup();
     m_core.stop();
     event->accept();
 }

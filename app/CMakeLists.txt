@@ -19,6 +19,13 @@ target_compile_definitions(emblink_studio_corelink PUBLIC
     EMBLINK_STUDIO_CORE_SRC_DIR="${PROJECT_SOURCE_DIR}/core/src"
 )
 
+# The dockable layout: every view a dock, layouts saved and restored (spec section 7).
+qt_add_library(emblink_studio_workbench STATIC
+    src/workbench.cpp src/workbench.h
+)
+target_include_directories(emblink_studio_workbench PUBLIC src)
+target_link_libraries(emblink_studio_workbench PUBLIC Qt6::Widgets ads::qtadvanceddocking-qt6)
+
 # The notices list shown in the About box, generated from third_party/components.json.
 set(notices "${CMAKE_CURRENT_BINARY_DIR}/NOTICES.md")
 add_custom_command(
@@ -38,7 +45,7 @@ qt_add_executable(emblinkstudio WIN32 MACOSX_BUNDLE
     src/main.cpp
     src/mainwindow.cpp src/mainwindow.h
 )
-target_link_libraries(emblinkstudio PRIVATE emblink_studio_corelink Qt6::Widgets)
+target_link_libraries(emblinkstudio PRIVATE emblink_studio_corelink emblink_studio_workbench Qt6::Widgets)
 target_compile_definitions(emblinkstudio PRIVATE EMBLINK_STUDIO_VERSION="${PROJECT_VERSION}")
 set_source_files_properties("${notices}" PROPERTIES QT_RESOURCE_ALIAS NOTICES.md)
 qt_add_resources(emblinkstudio notices PREFIX "/" BASE "${CMAKE_CURRENT_BINARY_DIR}" FILES "${notices}")
@@ -57,4 +64,8 @@ if(EMBLINK_STUDIO_BUILD_TESTS)
     endforeach()
     target_compile_definitions(tst_coreclient PRIVATE
         EMBLINK_STUDIO_FAKE_CORE="${CMAKE_CURRENT_SOURCE_DIR}/tests/fake_core.py")
+
+    qt_add_executable(tst_workbench tests/tst_workbench.cpp)
+    target_link_libraries(tst_workbench PRIVATE emblink_studio_workbench Qt6::Test)
+    add_test(NAME tst_workbench COMMAND tst_workbench)
 endif()

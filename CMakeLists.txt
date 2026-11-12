@@ -28,4 +28,22 @@ if(EMBLINK_STUDIO_BUILD_TESTS)
     find_package(Qt6 REQUIRED COMPONENTS Test)
 endif()
 
+# Qt Advanced Docking System (spec section 11, question 1): LGPL-2.1-or-later, so it is built
+# as a shared library and linked dynamically (spec section 9). Pinned by version and SHA-256.
+include(FetchContent)
+set(QT_VERSION_MAJOR 6)
+set(BUILD_STATIC OFF CACHE BOOL "Build Qt Advanced Docking System as a static library" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Build Qt Advanced Docking System's examples" FORCE)
+FetchContent_Declare(qtads
+    URL https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/archive/refs/tags/v5.1.1.tar.gz
+    URL_HASH SHA256=9ce947acbb1984946f9145c976e42e6984f99b98fb414dd7354a290af6d4ff04
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(qtads)
+# Next to the application and the tests, so Windows finds the DLL without a PATH change.
+set_target_properties(qtadvanceddocking-qt6 PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/app"
+    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/app"
+)
+
 add_subdirectory(app)

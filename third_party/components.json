@@ -6,10 +6,23 @@
       "version": "6.8",
       "licence": "LGPL-3.0-only",
       "linkage": "dynamic",
-      "modules": ["Qt Core", "Qt GUI", "Qt Widgets"],
+      "modules": [
+        "Qt Core",
+        "Qt GUI",
+        "Qt Widgets"
+      ],
       "url": "https://www.qt.io/",
       "source": "https://download.qt.io/official_releases/qt/",
       "used_by": "the desktop application"
+    },
+    {
+      "name": "Qt Advanced Docking System",
+      "version": "5.1.1",
+      "licence": "LGPL-2.1-or-later",
+      "linkage": "dynamic",
+      "url": "https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System",
+      "source": "https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/archive/refs/tags/v5.1.1.tar.gz",
+      "used_by": "the desktop application: docking and layouts"
     }
   ]
 }

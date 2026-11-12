@@ -7,7 +7,10 @@ How to set up a machine, build and test EmbLink Studio, and get a change into `m
 
 CMake 3.21 or later, Ninja, Qt 6.8 or later, Python 3.11 or later, and clang-format 18 for C++ formatting
 (`pip install clang-format==18.1.8` gives the version CI runs). On macOS, Homebrew's `qt`, `cmake`, `ninja` and
-`python` are enough.
+`python` are enough. On Linux, also the `libxcb1-dev` package.
+
+The first `cmake --preset dev` downloads Qt Advanced Docking System, pinned by version and SHA-256
+in `CMakeLists.txt`, and builds it as a shared library. Later configures reuse it.
 
 ## Build and test
 
